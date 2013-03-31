@@ -136,89 +136,115 @@ class World
     return mix[mix.length - 1].type;
   }
 
-  inline function heuristic(from : Coord, to : Coord) : Int
+  inline function heuristic(from : Coord, to : Coord) : Float
   {
-    return Math.floor(100 * Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2)));
+    return Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2));
   }
 
-  public inline function path(start : Coord, dest : Coord, traversible : Tile -> Bool) : Path
+  inline function key(c : Coord) : String
   {
-    return _path(start, dest, traversible).path;
+    return c.x + "_" + c.y;
   }
 
-  function _path(start : Coord, dest : Coord, traversible : Tile -> Bool) : { path : Path, cost : Float }
+  public function path(start : Coord, dest : Coord, traversible : Tile -> Bool) : Path
   {
-    if (start.equals(dest)) {
-      trace("Hit at " + start);
-      return { path: [dest], cost: 0 };
-    }
+    var open = new Heap<PTile>(function(a, b) return (b.g + b.f) - (a.g + a.f));
+    var openpt : PTile = { coord: start, parent: null, f: heuristic(start, dest), g: 0 };
+    open.add(openpt);
+    var onOpen = new Map<PTile>();
+    onOpen.set(key(start), openpt);
 
-    var options = new Array<{ coord : Coord, heur : Int }>();
+    var closed = new Map<PTile>();
 
-    for (c in [{ x: 0, y: -1 },
-               { x: 1, y: 0 },
-               { x: 0, y: 1 },
-               { x: -1, y: 0 }]) {
-      c.x += start.x;
-      c.y += start.y;
-      c.wrapTo(grid);
-      if (traversible(grid[c.y][c.x])) {
-        options.push({ coord: c, heur: heuristic(c, dest) });
+    var path : PTile = null;
+    var t : PTile;
+
+    while (path == null && (t = open.pop()) != null) {
+      closed.set(key(t.coord), t);
+      //onOpen.set(key(t.coord), null);
+
+      for (delta in [{ x: 0, y: -1 },
+                     { x: 1, y: 0 },
+                     { x: 0, y: 1 },
+                     { x: -1, y: 0 }]) {
+        delta.x += t.coord.x;
+        delta.y += t.coord.y;
+        delta.wrapTo(grid);
+
+        if (delta.equals(dest)) {
+          path = t;
+          break;
+        }
+
+        var k = key(delta);
+        if (traversible(grid[delta.y][delta.x]) && closed.get(k) == null) {
+          var pt : PTile = { coord: delta, parent: t, f: heuristic(delta, dest), g: 1 + t.g };
+
+          var onOp = onOpen.get(k);
+          if (onOp == null) {
+            open.add(pt);
+            onOpen.set(k, pt);
+          } else {
+            if (onOp.g > pt.g) {
+              open.remove(onOp);
+              open.add(pt);
+              onOpen.set(k, pt);
+            }
+          }
+        }
       }
     }
 
-    options.sort(function(a, b) return a.heur - b.heur);
+    if (path == null) return null;
 
-    trace("At " + start);
-    for (opt in options) {
-      trace("Trying " + opt.coord);
-      var subpath = _path(opt.coord, dest, traversible);
-      if (subpath != null) {
-        subpath.path.push(start);
-        ++subpath.cost;
-        return subpath;
-      }
-    }
-    return null;
+    var fullPath : Path = [dest, path.coord];
+    while ((path = path.parent) != null) fullPath.push(path.coord);
+    return fullPath;
   }
 
-  //public function path(start : Coord, dest : Coord, traversible : Tile -> Bool) : { p : Path, cost : Float }
-  //{
-    //if (start == dest) {
-      //return { p: [dest], cost: 0 };
-    //}
-
-    //var options : Array<Coord> = [start.addWrap(0, -1, grid),
-                                  //start.addWrap(1, 0, grid),
-                                  //start.addWrap(0, 1, grid),
-                                  //start.addWrap(-1, 0, grid)];
-    //var oldOptions = options;
-    //options = new Array();
-    //for (opt in oldOptions) {
-      //if (traversible(grid[opt.y][opt.x])) options.push(opt);
-    //}
-
-    //var heurOpts = new Array<{ c : Coord, h : Float }>();
-    //for (opt in options) {
-      //heurOpts.push({ c: opt, h: heuristic(opt, dest) });
-    //}
-    //heurOpts.sort(function(a, b) return Math.floor(10 * (a.h - b.h)));
-
-    //var pathOpts = new Array<{ p : Path, cost : Float }>();
-    //for (opt in heurOpts) {
-      //var p = path(opt.c, dest, traversible);
-      //if (p != null) {
-        //p.p.push(start);
-        //++p.cost;
-        //return p;
-        ////pathOpts.push(p);
-      //}
-    //}
-    //return null;
-    ////~ pathOpts.sort(function(a, b) return Math.floor(10 * (a.cost - b.cost)));
-    ////~ return if (pathOpts.length > 0) pathOpts[0] else null;
-  //}
+  //~ public inline function path(start : Coord, dest : Coord, traversible : Tile -> Bool) : Path
+  //~ {
+    //~ return _path(start, dest, traversible).path;
+  //~ }
+//~
+  //~ function _path(start : Coord, dest : Coord, traversible : Tile -> Bool) : { path : Path, cost : Float }
+  //~ {
+    //~ if (start.equals(dest)) {
+      //~ trace("Hit at " + start);
+      //~ return { path: [dest], cost: 0 };
+    //~ }
+//~
+    //~ var options = new Array<{ coord : Coord, heur : Int }>();
+//~
+    //~ for (c in [{ x: 0, y: -1 },
+               //~ { x: 1, y: 0 },
+               //~ { x: 0, y: 1 },
+               //~ { x: -1, y: 0 }]) {
+      //~ c.x += start.x;
+      //~ c.y += start.y;
+      //~ c.wrapTo(grid);
+      //~ if (traversible(grid[c.y][c.x])) {
+        //~ options.push({ coord: c, heur: heuristic(c, dest) });
+      //~ }
+    //~ }
+//~
+    //~ options.sort(function(a, b) return a.heur - b.heur);
+//~
+    //~ trace("At " + start);
+    //~ for (opt in options) {
+      //~ trace("Trying " + opt.coord);
+      //~ var subpath = _path(opt.coord, dest, traversible);
+      //~ if (subpath != null) {
+        //~ subpath.path.push(start);
+        //~ ++subpath.cost;
+        //~ return subpath;
+      //~ }
+    //~ }
+    //~ return null;
+  //~ }
 }
+
+private typedef PTile = { coord : Coord, parent : PTile, f : Float, g : Float };
 
 class Factory
 {

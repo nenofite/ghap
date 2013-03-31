@@ -130,10 +130,10 @@ class View
       draw();
     };
 
-    //~ var path = world.path({ x: 10, y: 2 }, { x: 40, y: 20 }, function(tile) return tile.type == water);
-    //~ for (c in path) {
-      //~ world.addOverlay({ sprite: marker, coord: c });
-    //~ }
+    var path = world.path({ x: 10, y: 2 }, { x: 16, y: 46 }, function(tile) return tile.type == water);
+    for (c in path) {
+      world.addOverlay({ sprite: marker, coord: c });
+    }
   }
 
   public static function main()
@@ -215,12 +215,6 @@ class View
               context.drawImage(sprite, lx + Math.floor(spr.x - sprite.width / 2), ly + Math.floor(spr.y - sprite.height));
               ++s_sprites;
             }
-
-            //~ var overlays = world.overlaysAt(ax, ay);
-            //~ for (o in overlays) {
-              //~ var spr = o.sprite;
-              //~ context.drawImage(spr, lx - Math.floor(spr.width / 2), ly - spr.height);
-            //~ }
           }
         }
       }
