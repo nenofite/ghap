@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Sometile Grid</title>
+<style>
+body {
+  background: gray;
+}
+
+body, canvas {
+  padding: 0px;
+  margin: 0px;
+}
+
+#ctl_pane {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: 200px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+#ctl_pane h3 {
+  color: white;
+  text-align: center;
+  border-bottom: 1px dotted;
+}
+
+#ctl_pane input {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: 1px solid black;
+  width: 4em;
+}
+#ctl_pane input:hover, #ctl_pane input:focus {
+  background: black;
+}
+
+#ctl_pane label {
+  color: white;
+}
+
+#ctl_pane td {
+  width: 100%;
+}
+</style>
+</head>
+<body>
+<canvas id="canv" width="800" height="600" tabindex="1"></canvas>
+<div id="ctl_pane">
+  <h3>Map</h3>
+  <table id="ctl_table">
+  </table>
+  <h3>View</h3>
+  Grid Position: <span id="grid_pos"></span><br/>
+  Draw Stats: <span id="stats"></span>
+</div>
+<!--
+<div id="debby">Herro</div>
+-->
+<script type="text/javascript" src="sometile.js"></script>
+</body>
+</html>
