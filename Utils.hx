@@ -59,19 +59,52 @@ class Utils
     return a.x == b.x && a.y == b.y;
   }
 
-  //~ public static inline function addWrap<T>(coord : World.Coord, xd : Int, yd : Int, grid : Array<Array<T>>) : World.Coord
-  //~ {
-    //~ var x = coord.x + xd;
-    //~ var y = coord.y + yd;
-//~
-    //~ var width = grid[0].length;
-    //~ while (x < 0) x += width;
-    //~ while (x >= width) x -= width;
-//~
-    //~ var height = grid.length;
-    //~ while (y < 0) y += height;
-    //~ while (y >= height) y -= height;
-//~
-    //~ return { x: x, y: y };
-  //~ }
+  public static function distanceTo(a : World.Coord, b : World.Coord) : Float
+  {
+    return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+  }
+
+  public static function directionTo(a : World.Coord, b : World.Coord) : World.Coord
+  {
+    var angle = Math.round(Math.atan((a.y - b.y) / (b.x - a.x)) / Math.PI * 4);
+    var dir = { x: switch (angle) {
+                     case -2, 2: 0;
+                     case -1, 0, 1: 1;
+                   },
+                y: switch (angle) {
+                     case 1, 2: -1;
+                     case 0: 0;
+                     case -2, -1: 1;
+                   }
+              };
+    if (b.x - a.x < 0) {
+      dir.x *= -1;
+      dir.y *= -1;
+    }
+    return dir;
+  }
+
+  public static inline function getNeighbors(c : World.Coord) : Array<World.Coord>
+  {
+    return [{ x: c.x - 1, y: c.y - 1 },
+            { x: c.x    , y: c.y - 1 },
+            { x: c.x + 1, y: c.y - 1 },
+            { x: c.x + 1, y: c.y     },
+            { x: c.x + 1, y: c.y + 1 },
+            { x: c.x    , y: c.y + 1 },
+            { x: c.x - 1, y: c.y + 1 },
+            { x: c.x - 1, y: c.y     }];
+  }
+
+  public static function getRadius(center : World.Coord, r : Int) : Array<World.Coord>
+  {
+    var arr = new Array<World.Coord>();
+    for (xd in -r...r) {
+      for (yd in -r...r) {
+        var c = { x: center.x + xd, y: center.y + yd };
+        arr.push(c);
+      }
+    }
+    return arr;
+  }
 }

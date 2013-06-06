@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Go Hug a Panda</title>
+<meta name="description" content="Just go hug a panda already.">
+<link rel="stylesheet" type="text/css" href="ghap.css"/>
+<link href='http://fonts.googleapis.com/css?family=Roboto+Slab|Roboto:400,300' rel='stylesheet' type='text/css'>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+</head>
+<body>
+<canvas id="canv" width="800" height="600" tabindex="1"></canvas>
+<div id="selection">
+  <div id="sel_name"></div>
+  <div id="sel_level"></div>
+</div>
+<div id="ctl_pane">
+  <h3>Controls</h3>
+<!--
+  <table id="ctl_table"></table>
+-->
+  <button id="btn_inst" title="Shortcut: ?">How to Play</button>
+  <button id="btn_seed">World Seed</button>
+  <button id="btn_achv" title="Shortcut: A">Achievements</button>
+  <button id="btn_about">About</button>
+<!--
+  <h3>Stats</h3>
+  <span id="stats"></span>
+-->
+  <h3>Where's That Panda?</h3>
+  <div id="compass">
+    <img src="compass base.png" id="cmp_base">
+    <img src="compass needle.png" id="cmp_needle">
+  </div>
+  <h3>Battle Log</h3>
+  <ul id="battle"></ul>
+</div>
+
+<div id="achievements"></div>
+
+<img id="btn_dismount" src="dismount.png" alt="Dismount" title="Shortcut: D">
+<img id="btn_center" src="center view.png" alt="Center View" title="Shortcut: C">
+
+<div id="move">
+  <img src="move arrow.png" id="arr_ul" alt="UL">
+  <img src="move arrow.png" id="arr_u" alt="U">
+  <img src="move arrow.png" id="arr_ur" alt="UR">
+  
+  <img src="move arrow.png" id="arr_l" alt="L">
+  <img src="move arrow.png" id="arr_r" alt="R">
+  
+  <img src="move arrow.png" id="arr_dl" alt="DL">
+  <img src="move arrow.png" id="arr_d" alt="D">
+  <img src="move arrow.png" id="arr_dr" alt="DR">
+</div>
+
+<!--  Dialogs  -->
+<div class="dia" id="dia_win">
+  <h1>Victory!</h1>
+  <p>Congratulations, you won the game.  I am so proud of you.</p>
+  <div class="center"><img src="player on panda.png" alt="You.  On your new panda." title="Please enjoy your panda responsibly."></div>
+  <div class="center"><a data-bind="restart" title="I'm easily amused.">Play Again</a></div>
+</div>
+<div class="dia" id="dia_lose">
+  <h1>You died.</h1>
+  <p>Well, there's not much to say.  But I think you know what you should do now.</p>
+  <p>I'll give you a hint.</p>
+  <div class="center"><a data-bind="restart">Play Again</a></div>
+</div>
+<div class="dia" id="dia_seed">
+  <h1>World Seed</h1>
+  <p>The <em>world seed</em> is the number which the world generator uses to pseudo-randomly generate the world.
+  Given the same seed, the generator will always produce the same map.</p>
+  <p>You may view the world seed for the current map so that you can use this map again, or you may enter a different world seed.</p>
+  <p><strong>Warning:</strong> Entering a world seed will start a new game in that world.  Progress will be lost.</p>
+  <div class="center"><span>Current seed: <strong><span id="seed"></span></strong></span><a data-bind="change">Change Seed</a></div>
+  <div class="center"><a data-bind="close">Close</a></div>
+</div>
+<div class="dia" id="dia_change_seed">
+  <h1>Change World Seed</h1>
+  <p>Entering a world seed will start a new game in that world.</p>
+  <p>Progress will be lost.</p>
+  <div class="center"><input id="inp_seed"><a data-bind="accept">Accept New Seed</a></div>
+  <div class="center"><a data-bind="cancel">Cancel</a></div>
+</div>
+<div class="dia" id="dia_achievements">
+  <h1>Achievements</h1>
+  <ul id="ul_achv"></ul>
+  <div class="center"><a data-bind="close">Close</a></div>
+</div>
+<div class="dia" id="dia_instructions">
+  <h1>How to Play</h1>
+  <div class="center"><img alt="Instructions" title="Need I say more?" src="instructions.png"></div>
+  <div class="center"><a data-bind="close">Close</a></div>
+</div>
+<div class="dia" id="dia_about">
+  <h1>About</h1>
+  <div class="center">Go Hug a Panda version 1.2</div>
+  <div class="center"><span>Contact us at <a target="_window" href="http://www.bizwacky.com">bizwacky.com</a>.</span></div>
+  <div class="center">&copy; Copyright 2013 Ben Tucker.  All rights reserved.</div>
+  <div class="center"><a data-bind="close">Close</a></div>
+</div>
+<div class="dia a b" id="dia_loading">
+  <h1>Loading...</h1>
+</div>
+<script type="text/javascript" src="ghap.js"></script>
+</body>
+</html>

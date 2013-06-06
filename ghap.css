@@ -1,0 +1,374 @@
+body {
+  background: black;
+  font: 16px "Roboto Slab", serif;
+}
+
+body, canvas {
+  padding: 0px;
+  margin: 0px;
+}
+#ctl_pane {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: 200px;
+  overflow: auto;
+  padding: 5px;
+  border: 1px solid black;
+
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+#ctl_pane h3 {
+  color: white;
+  text-align: center;
+  border-bottom: 1px dotted;
+}
+
+input {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: 1px solid black;
+  width: 4em;
+}
+input:hover, input:focus {
+  background: black;
+}
+
+#ctl_pane label {
+  color: white;
+}
+
+#ctl_pane td {
+  width: 100%;
+}
+
+#ctl_pane button {
+  width: 100%;
+  margin: 0.25em 0;
+  border: 1px solid black;
+
+  font: inherit;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+#ctl_pane button:hover, #ctl_pane button:focus {
+  text-shadow: 0 0 5px;
+  background: black;
+}
+
+#ctl_pane button:active {
+
+}
+
+#battle {
+  padding: 0;
+}
+
+#battle li {
+  margin: 1em 0 1em 2em;
+  transition: opacity 1s;
+}
+
+#battle li.error {
+  list-style: url("error.png");
+}
+
+#battle li.fight {
+  list-style: url("fight.png");
+}
+
+#battle li.xp {
+  list-style: url("xp.png");
+}
+
+#battle li.closing {
+  opacity: 0;
+}
+
+#keypress {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+
+  transition: background 1s;
+  background: none;
+}
+
+#keypress.glow {
+  transition: background 0s;
+  background: red;
+}
+
+.dia {
+  display: none;
+  
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 30em;
+  margin: 0 0 0 -15em;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+
+  transform: scale(1.25);
+  -webkit-transform: scale(1.25);
+  opacity: 0;
+  transition: opacity 0.5s, -webkit-transform 0.5s;
+  transition: opacity 0.5s, transform 0.5s;
+
+  /* --- */
+
+  overflow: auto;
+  padding: 1em;
+  border: 1px solid white;
+
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+}
+
+.dia h1 {
+  text-align: center;
+}
+
+.dia a {
+  color: white;
+  text-shadow: 0 0 3px white;
+  cursor: pointer;
+}
+
+.dia.a {
+  display: block;
+}
+
+.dia.b {
+  opacity: 1;
+  transform: none;
+  -webkit-transform: none;
+}
+
+#dia_instructions {
+  width: 40em;
+  margin-left: -20em;
+}
+
+.center {
+  text-align: center;
+  margin: 1em auto;
+}
+.center > * {
+  margin: 0 1em;
+}
+
+#compass {
+  position: relative;
+  height: 100px;
+}
+
+#cmp_base, #cmp_needle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -50px;
+}
+
+#cmp_needle {
+  transition: -webkit-transform 0.25s;
+  transition: transform 0.25s;
+}
+
+#move {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border: 1px solid black;
+  
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#move > img {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+}
+#move > img:hover, #btn_dismount:hover, #btn_center:hover {
+  background: white;
+}
+
+#arr_ul {
+  top: 0;
+  left: 0;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+#arr_u {
+  top: 0;
+  left: 60px;
+}
+#arr_ur {
+  top: 0;
+  right: 0;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+#arr_l {
+  top: 60px;
+  left: 0;
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+}
+#arr_r {
+  top: 60px;
+  right: 0;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+}
+
+#arr_dl {
+  bottom: 0;
+  left: 0;
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+#arr_d {
+  bottom: 0;
+  left: 60px;
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+}
+#arr_dr {
+  bottom: 0;
+  right: 0;
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+#btn_dismount {
+  position: absolute;
+  right: 125px;
+  bottom: 220px;
+  border: 1px solid black;
+  
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#btn_center {
+  position: absolute;
+  right: 5px;
+  bottom: 220px;
+  border: 1px solid black;
+  
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#achievements {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 302px;
+  padding: 0;
+  max-height: 90%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#achievements > div {
+  width: 300px;
+  height: 100px;
+  margin: 0 0 20px 0;
+  position: relative;
+  border: 1px solid white;
+  
+  border-radius: 5px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  
+  transition: opacity 1s, height 1s, margin 1s;
+}
+#achievements > div > .achv_img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  border-right: 1px solid white;
+  
+  background: rgba(0, 0, 0, 0.5);
+}
+#achievements > div > .lev_img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+}
+#achievements > div > .type {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  
+  font: 300 14px "Roboto", sans-serif;
+  color: rgba(255, 255, 255, 0.75);
+}
+#achievements > div > .a_title {
+    position: absolute;
+    top: 22px;
+    left: 110px;
+    
+    font: 30px "Roboto Slab", serif;
+}
+#achievements > div > .a_desc {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    width: 180px;
+    
+    line-height: 16px;
+}
+#achievements > div > .levelup {
+    position: absolute;
+    top: 32px;
+    left: 110px;
+    
+    font: 30px "Roboto Slab", serif;
+}
+
+#selection {
+    position: absolute;
+    width: 120px;
+    height: 50px;
+    border: 1px solid white;
+    display: none;
+    
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    opacity: 0;
+    
+    transition: opacity 0.5s;
+}
+#sel_name {
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    
+    font: 18px "Roboto Slab", serif;
+}
+#sel_level {
+    position: absolute;
+    bottom: 5px;
+    left: 15px;
+    
+    font: 16px "Roboto", sans-serif;
+}

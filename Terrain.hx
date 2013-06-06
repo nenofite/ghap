@@ -8,6 +8,11 @@ class Terrain
   public static inline var varianceX = 10;
   public static inline var varianceY = 10;
 
+  public static var forest : Terrain;
+  public static var grass  : Terrain;
+  public static var water  : Terrain;
+  public static var rock   : Terrain;
+
   public var name(default, null) : String;
 
   public var tile(default, null) : Dynamic;
@@ -19,6 +24,25 @@ class Terrain
     this.tile = tile;
     this.sprites = sprites;
   }
+
+  public static function init()
+  {
+    //~ var grass_bg = ImgLoader.get("grass.png");
+    //~ var rock_spr = ImgLoader.get("rock sprite.png");
+    //~ var grass_spr = ImgLoader.get("grass tuft.png");
+//~
+    //~ forest = new Terrain("Forest", Images.i.i.grassBg, [{ sprite: ImgLoader.get("tree.png"), prob: 0.8 }]);
+    //~ grass = new Terrain("Grass", grass_bg, [{ sprite: rock_spr, prob: 0.05 }, { sprite: grass_spr, prob: 0.8 }]);
+    //~ water = new Terrain("Water", ImgLoader.get("water.png"), []);
+    //~ rock = new Terrain("Rock", ImgLoader.get("rock.png"), [{ sprite: rock_spr, prob: 0.5 }]);
+
+    forest = new Terrain("Forest", Images.i.grassBg, [{ sprite: Images.i.tree, prob: 0.8 }]);
+    grass = new Terrain("Grass", Images.i.grassBg, [{ sprite: Images.i.rock, prob: 0.05 }, { sprite: Images.i.grass, prob: 0.8 }]);
+    water = new Terrain("Water", Images.i.waterBg, []);
+    rock = new Terrain("Rock", Images.i.rockBg, [{ sprite: Images.i.rock, prob: 0.5 }]);
+  }
+
+
 
   public inline function iterSprites() : Iterator<ProbSprite>
   {

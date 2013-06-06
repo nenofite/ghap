@@ -2,17 +2,29 @@ using Utils;
 
 class World
 {
-  var mix : Array<{ type : Terrain, prob : Float }>;
+  public static inline var UpdateDist = 12;
 
+  var mix : Array<TerrainSpec>;
+
+  // row-major
   var grid : Array<Array<Tile>>;
-  var overlays : Array<Overlay>;
+  public var ents : Hash<Ent>;
 
   var rand : Rand;
   public var originalSeed(default, null) : Int;
 
   var totalProb : Float;
 
-  public function new(mix, totalProb, seed)
+  public var dirty(default, null) : Bool;
+  public var onDirty : Void -> Void = null;
+
+  public var clearLog : Void -> Void = null;
+  public var log : Log -> Void = null;
+
+  public var win : Void -> Void = null;
+  public var lose : Void -> Void = null;
+
+  public function new(mix, totalProb, entMix : Array<EntSpec>, seed)
   {
     originalSeed = seed;
     rand = new Rand(seed);
@@ -21,10 +33,26 @@ class World
     this.mix = mix;
     this.totalProb = totalProb;
     grid = new Array();
-    overlays = new Array();
+    ents = new Hash();
 
     generate(15, 15);
     for (i in 0...4) subdivide();
+
+    for (em in entMix) {
+      for (i in 0...em.num) {
+        while (true) {
+          var c = { x: Math.floor(rand.next() * grid[0].length),
+                    y: Math.floor(rand.next() * grid.length) };
+
+          if (inBounds(c) && em.matches(c, this)) {
+            addEnt(c, em.make(rand));
+            break;
+          }
+        }
+      }
+    }
+
+    dirty = false;
   }
 
   function generate(w : Int, h : Int)
@@ -92,24 +120,85 @@ class World
     }
   }
 
-  public function addOverlay(o : Overlay)
+  public inline function tileAt(c : Coord) : Tile
   {
-    overlays.push(o);
+    if (!inBounds(c)) throw "Out of bounds: " + c;
+    return grid[c.y][c.x];
   }
 
-  public function overlaysAt(x : Int, y : Int) : Array<Overlay>
+  public inline function inBounds(c : Coord) : Bool
   {
-    var arr = new Array<Overlay>();
-    for (o in overlays) {
-      var c = o.coord;
-      if (c.x == x && c.y == y) arr.push(o);
+    return c.x >= 0 && c.y >= 0 && c.x < grid[0].length && c.y < grid.length;
+  }
+
+  public function addEnt(c : Coord, e : Ent)
+  {
+    if (e == null) throw "Called addEnt() with null Ent.";
+    if (e.coord != null) throw "Called addEnt() with already located Ent.";
+    if (!inBounds(c)) throw "Coord out of bounds: " + c;
+
+    ents.set(key(c), e);
+    e.coord = c;
+    makeDirty();
+  }
+
+  public function removeEnt(c : Coord) : Null<Ent>
+  {
+    var k = key(c);
+    var old = ents.get(k);
+    if (old != null) {
+      ents.remove(k);
+      old.coord = null;
     }
-    return arr;
+    return old;
   }
 
-  public inline function iterOverlays() : Iterator<Overlay>
+  public function moveEnt(from : Coord, to : Coord) : Null<Ent>
   {
-    return overlays.iterator();
+    var e = ents.get(key(from));
+    var old = null;
+    if (e != null) {
+      old = removeEnt(to);
+      removeEnt(from);
+      addEnt(to, e);
+    }
+    return old;
+  }
+
+  public inline function entAt(c : Coord) : Ent
+  {
+    return ents.get(key(c));
+  }
+
+  public inline function entAt2(x : Int, y : Int) : Ent
+  {
+    return ents.get(key2(x, y));
+  }
+
+  public function updateEnts()
+  {
+    clearLog();
+    Ent.walriFollowing = 0;
+
+    //~ var coords = ents.keys().flatten();
+    var coords = Ent.Player.p.coord.getRadius(UpdateDist);
+    var updateEnts = new Array<Ent>();
+    for (c in coords) {
+      var e = ents.get(key(c));
+      if (e != null && e.coord != null && e.alive) updateEnts.push(e);
+    }
+    
+    for (e in updateEnts) {
+      if (e.coord != null && e.alive) e.update(this);
+    }
+    
+    if (Ent.walriFollowing >= 10) Achievement.aPopular.qualify();
+    
+    //~ for (c in coords) {
+      //~ var e = ents.get(key(c));
+      //~ if (e != null && e.coord != null && e.alive) e.update(this);
+    //~ }
+    makeDirty();
   }
 
   public function iterGrid() : Iterator<Iterator<Tile>>
@@ -138,12 +227,18 @@ class World
 
   inline function heuristic(from : Coord, to : Coord) : Float
   {
-    return Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2));
+    return from.distanceTo(to);
+    //~ return Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2));
   }
 
   inline function key(c : Coord) : String
   {
-    return c.x + "_" + c.y;
+    return key2(c.x, c.y);
+  }
+
+  inline function key2(x : Int, y : Int) : String
+  {
+    return x + "_" + y;
   }
 
   public function path(start : Coord, dest : Coord, traversible : Tile -> Bool) : Path
@@ -161,7 +256,6 @@ class World
 
     while (path == null && (t = open.pop()) != null) {
       closed.set(key(t.coord), t);
-      //onOpen.set(key(t.coord), null);
 
       for (delta in [{ x: 0, y: -1 },
                      { x: 1, y: 0 },
@@ -202,58 +296,53 @@ class World
     return fullPath;
   }
 
-  //~ public inline function path(start : Coord, dest : Coord, traversible : Tile -> Bool) : Path
-  //~ {
-    //~ return _path(start, dest, traversible).path;
-  //~ }
-//~
-  //~ function _path(start : Coord, dest : Coord, traversible : Tile -> Bool) : { path : Path, cost : Float }
-  //~ {
-    //~ if (start.equals(dest)) {
-      //~ trace("Hit at " + start);
-      //~ return { path: [dest], cost: 0 };
-    //~ }
-//~
-    //~ var options = new Array<{ coord : Coord, heur : Int }>();
-//~
-    //~ for (c in [{ x: 0, y: -1 },
-               //~ { x: 1, y: 0 },
-               //~ { x: 0, y: 1 },
-               //~ { x: -1, y: 0 }]) {
-      //~ c.x += start.x;
-      //~ c.y += start.y;
-      //~ c.wrapTo(grid);
-      //~ if (traversible(grid[c.y][c.x])) {
-        //~ options.push({ coord: c, heur: heuristic(c, dest) });
-      //~ }
-    //~ }
-//~
-    //~ options.sort(function(a, b) return a.heur - b.heur);
-//~
-    //~ trace("At " + start);
-    //~ for (opt in options) {
-      //~ trace("Trying " + opt.coord);
-      //~ var subpath = _path(opt.coord, dest, traversible);
-      //~ if (subpath != null) {
-        //~ subpath.path.push(start);
-        //~ ++subpath.cost;
-        //~ return subpath;
-      //~ }
-    //~ }
-    //~ return null;
-  //~ }
+  public inline function makeDirty()
+  {
+    if (!dirty) {
+      dirty = true;
+      if (onDirty != null) onDirty();
+    }
+  }
+
+  public inline function makeClean()
+  {
+    dirty = false;
+  }
 }
 
 private typedef PTile = { coord : Coord, parent : PTile, f : Float, g : Float };
 
 class Factory
 {
-  var mix : Array<{ type : Terrain, prob : Float }>;
+  static inline var ZOMBIE_DIST = 20;
+  static inline var PANDA_DIST = 80;
+
+  var mix : Array<TerrainSpec>;
   var totalProb : Float = 0;
+
+  var entMix : Array<EntSpec>;
 
   public function new()
   {
     mix = new Array();
+    entMix = new Array();
+  }
+
+  public static function makeDefault() : Factory
+  {
+    var f = new Factory();
+
+    f.addTerrain(Terrain.forest);
+    f.addTerrain(Terrain.grass);
+    f.addTerrain(Terrain.rock, 0.2);
+    f.addTerrain(Terrain.water, 4);
+
+    f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(r) return Ent.Player.p);
+    f.addEnt(50, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(r) return new Ent.Walrus(Std.random(3) + 1));
+    f.addEnt(100, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= ZOMBIE_DIST, function(r) return new Ent.Zombie(Std.random(5) + 1));
+    f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= PANDA_DIST, function(r) return new Ent.Panda());
+
+    return f;
   }
 
   public function addTerrain(type : Terrain, prob : Float = 1)
@@ -262,9 +351,14 @@ class Factory
     mix.push({ type: type, prob: prob });
   }
 
+  public function addEnt(num : Int, matches : Coord -> World -> Bool, make : Rand -> Ent)
+  {
+    entMix.push({ num: num, matches: matches, make: make });
+  }
+
   public function generate(seed : Int) : World
   {
-    return new World(mix, totalProb, seed);
+    return new World(mix, totalProb, entMix, seed);
   }
 }
 
@@ -304,3 +398,13 @@ typedef Path = Array<Coord>;
 typedef Overlay = { sprite : Dynamic, coord : Coord };
 
 typedef Coord = { x : Int, y : Int };
+
+typedef TerrainSpec = { type : Terrain, prob : Float };
+typedef EntSpec = { num : Int, matches : Coord -> World -> Bool, make : Rand -> Ent };
+
+enum Log
+{
+  Error(msg : String);
+  Battle(msg : String);
+  Xp(msg : String);
+}
