@@ -227,6 +227,10 @@ input:hover, input:focus {
   transform: rotate(-90deg);
   -webkit-transform: rotate(-90deg);
 }
+#arr_w {
+  top: 60px;
+  left: 60px;
+}
 #arr_r {
   top: 60px;
   right: 0;

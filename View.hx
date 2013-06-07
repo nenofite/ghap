@@ -64,6 +64,7 @@ class View
   public var arr_dl : Dynamic;
   public var arr_l : Dynamic;
   public var arr_ul : Dynamic;
+  public var arr_w : Dynamic;
   
   public var btn_dismount : Dynamic;
 
@@ -182,6 +183,7 @@ class View
     arr_dl = js.Lib.document.getElementById("arr_dl");
     arr_l = js.Lib.document.getElementById("arr_l");
     arr_ul = js.Lib.document.getElementById("arr_ul");
+    arr_w = js.Lib.document.getElementById("arr_w");
     
     btn_dismount = js.Lib.document.getElementById("btn_dismount");
 

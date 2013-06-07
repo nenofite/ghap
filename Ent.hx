@@ -152,6 +152,7 @@ class Player extends Ent
             if (traversible) w.moveEnt(coord, c);
           }
         }
+      case Wait:
       case Dismount:
         dismountWalrus(w);
     }
@@ -298,6 +299,13 @@ class Player extends Ent
     v.binder.binds([103, 85], moveUL);
     v.arr_ul.onclick = moveUL;
     
+    var wait = function() {
+      dir = PlayerDir.Wait;
+      v.world.updateEnts();
+    };
+    v.binder.binds([101, 75], wait); // keypad '5', std 'k'
+    v.arr_w.onclick = wait;
+    
     var dismount = function() {
       if (onWalrus != null) {
         dir = PlayerDir.Dismount;
@@ -312,12 +320,13 @@ class Player extends Ent
 enum PlayerDir
 {
   Move(c : World.Coord);
+  Wait;
   Dismount;
 }
 
 class Ai extends Ent
 {
-  public static inline var PathDist = 12;
+  public static inline var PathDist = World.UpdateDist;
 
   var traversible : Terrain -> Bool;
   
