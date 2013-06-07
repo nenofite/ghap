@@ -315,6 +315,8 @@ class Factory
 {
   static inline var ZOMBIE_DIST = 20;
   static inline var PANDA_DIST = 80;
+  static inline var PANDA_MOB_DIST1 = 8;
+  static inline var PANDA_MOB_DIST2 = 16;
   static inline var WALRUS_DIST = 5;
 
   var mix : Array<TerrainSpec>;
@@ -339,9 +341,11 @@ class Factory
 
     f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(r) return Ent.Player.p);
     f.addEnt(1, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) <= WALRUS_DIST, function(r) return new Ent.Walrus(1));
-    f.addEnt(50, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(r) return new Ent.Walrus(Std.random(3) + 1));
-    f.addEnt(100, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= ZOMBIE_DIST, function(r) return new Ent.Zombie(Std.random(5) + 1));
+    f.addEnt(100, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(r) return new Ent.Walrus(Math.floor(r.next() * 3) + 1));
+    f.addEnt(100, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= ZOMBIE_DIST, function(r) return new Ent.Zombie(Math.floor(r.next() * 5) + 1));
     f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= PANDA_DIST, function(r) return new Ent.Panda());
+    f.addEnt(15, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.panda.coord) <= PANDA_MOB_DIST1, function(r) return new Ent.Zombie(Math.floor(r.next() * 5) + 3));
+    f.addEnt(30, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.panda.coord) <= PANDA_MOB_DIST2, function(r) return new Ent.Zombie(Math.floor(r.next() * 5) + 1));
 
     return f;
   }

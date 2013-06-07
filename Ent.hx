@@ -400,6 +400,8 @@ class Walrus extends Ai
   
   /// Goes to first Zombie within 6 radius of here, otherwise toward
   /// Player if between 3 and 9 tiles inclusive from here
+  /// Increments walriFollowing when the Player's coord is chosen or
+  /// the Player's coord would have been chosen but the Walrus is too close
   override function destination(w : World) : World.Coord
   {
     for (c in coord.getRadius(6)) {
@@ -409,7 +411,10 @@ class Walrus extends Ai
     
     var playerCoord = Player.p.coord;
     var dist = coord.distanceTo(playerCoord);
-    if (dist <= 9 && dist >= 3) return playerCoord;
+    if (dist <= 9) {
+      Ent.walriFollowing++;
+      if (dist >= 3) return playerCoord;
+    }
     
     return null;
   }
