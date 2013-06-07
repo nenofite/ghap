@@ -65,7 +65,6 @@ class View
   public var arr_l : Dynamic;
   public var arr_ul : Dynamic;
   
-  public var btn_center : Dynamic;
   public var btn_dismount : Dynamic;
 
   // stats:
@@ -184,7 +183,6 @@ class View
     arr_l = js.Lib.document.getElementById("arr_l");
     arr_ul = js.Lib.document.getElementById("arr_ul");
     
-    btn_center = js.Lib.document.getElementById("btn_center");
     btn_dismount = js.Lib.document.getElementById("btn_dismount");
 
     binder = new KeyBinder();
@@ -201,11 +199,6 @@ class View
     //~ binder.bind(69, function() { // 'e'
     //~ });
     
-    var center = function() lookAt(Ent.Player.p.coord);
-    
-    binder.bind(67, center);
-    btn_center.onclick = center;
-
     //~ binder.uncaught(function(k) throw "Key: " + k);
 
     c.bind("keydown", function(ev) binder.call(ev.which));
@@ -245,16 +238,8 @@ class View
 
   function resize()
   {
-    var cx = viewX + viewW / 2;
-    var cy = viewY + viewH / 2;
-
     viewW = canvas.width = js.Lib.window.innerWidth ;
     viewH = canvas.height = js.Lib.window.innerHeight;
-    //~ viewW = canvas.width = (cast js.Lib.window).clientWidth;
-    //~ viewH = canvas.height = (cast js.Lib.window).clientHeight;
-
-    viewX = Math.round(cx - viewW / 2);
-    viewY = Math.round(cy - viewH / 2);
     
     Dia.resizeAll();
 
@@ -331,23 +316,6 @@ class View
     resize();
 
     lookAt(Ent.Player.p.coord);
-  }
-
-  /// recenters the view on the player when the player's top-left corner is:
-  /// * X: less than XPadding or greater than viewW - XPadding - (player sprite width)
-  /// * Y: less than YPadding or greater than viewH - YPadding - (player sprite height)
-  public function keepPlayerInView()
-  {
-    var tileX = Math.round((Ent.Player.p.coord.x + 0.5) * Terrain.spriteW) - viewX;
-    var tileY = Math.round((Ent.Player.p.coord.y + 0.5) * Terrain.spriteH) - viewY;
-    
-    var spr = Ent.Player.p.sprite;
-    var px = tileX - Math.round(spr.width / 2);
-    var py = tileY - spr.height;
-    
-    var isOutsidePadding = px < XPadding || px > viewW - XPadding - spr.width ||
-                           py < YPadding || py > viewH - YPadding - spr.height;
-    if (isOutsidePadding) lookAt(Ent.Player.p.coord);
   }
 
   public function lookAt(c : World.Coord)
@@ -492,7 +460,7 @@ class View
       ////~ keep = true;
     //}
     if (resized) resize();
-    keepPlayerInView();
+    lookAt(Ent.Player.p.coord);
     draw();
     updateCompass();
     if (selection != null) updateSelection();

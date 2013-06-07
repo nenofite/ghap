@@ -200,7 +200,7 @@ input:hover, input:focus {
   width: 60px;
   height: 60px;
 }
-#move > img:hover, #btn_dismount:hover, #btn_center:hover {
+#move > img:hover, #btn_dismount:hover {
   background: white;
 }
 
@@ -256,15 +256,6 @@ input:hover, input:focus {
 #btn_dismount {
   position: absolute;
   right: 125px;
-  bottom: 220px;
-  border: 1px solid black;
-  
-  background: rgba(0, 0, 0, 0.5);
-}
-
-#btn_center {
-  position: absolute;
-  right: 5px;
   bottom: 220px;
   border: 1px solid black;
   
