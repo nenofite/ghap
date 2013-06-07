@@ -317,6 +317,8 @@ enum PlayerDir
 
 class Ai extends Ent
 {
+  public static inline var PathDist = 12;
+
   var traversible : Terrain -> Bool;
   
   var prevDest : World.Coord = null;
@@ -332,6 +334,7 @@ class Ai extends Ent
   /// Abstract, must be overridden
   /// Where this Ai wants to go
   /// This can be null, in which case Ai.update() will not do anything
+  /// The destination should be <= PathDist away from the Ai
   function destination(w : World) : World.Coord
   {
     throw "Destination not implemented in " + Type.getClassName(Type.getClass(this));
@@ -369,7 +372,8 @@ class Ai extends Ent
     if (dir != null && traversible(w.tileAt(dir).type) && w.entAt(dir) == null) {
       w.moveEnt(coord, dir);
     } else {
-      path = w.path(coord, dest, function(t, c) return traversible(t) && w.entAt(c) == null);
+      var fn = function(terr, c) return coord.distanceTo(c) <= PathDist && traversible(terr) && w.entAt(c) == null;
+      path = w.path(coord, dest, fn);
       if (path == null) return;
       pathIndex = path.length - 3; // skip $-1 because that is our current coord; skip $-2 because we will use it right now
       w.moveEnt(coord, path[path.length - 2]);
