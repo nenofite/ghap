@@ -241,7 +241,11 @@ class World
     return x + "_" + y;
   }
 
-  public function path(start : Coord, dest : Coord, traversible : Tile -> Bool) : Path
+  /// Use A* to calculate a path
+  /// Can travel in all 8 directions
+  /// Uses traversible to determine if a tile is available for the path
+  /// Returned path starts with dest and ends with start (it's in reverse)
+  public function path(start : Coord, dest : Coord, traversible : Terrain -> Coord -> Bool) : Path
   {
     var open = new Heap<PTile>(function(a, b) return (b.g + b.f) - (a.g + a.f));
     var openpt : PTile = { coord: start, parent: null, f: heuristic(start, dest), g: 0 };
@@ -257,13 +261,8 @@ class World
     while (path == null && (t = open.pop()) != null) {
       closed.set(key(t.coord), t);
 
-      for (delta in [{ x: 0, y: -1 },
-                     { x: 1, y: 0 },
-                     { x: 0, y: 1 },
-                     { x: -1, y: 0 }]) {
-        delta.x += t.coord.x;
-        delta.y += t.coord.y;
-        delta.wrapTo(grid);
+      for (delta in t.coord.getNeighbors()) {
+        if (!inBounds(delta)) continue;
 
         if (delta.equals(dest)) {
           path = t;
@@ -271,7 +270,7 @@ class World
         }
 
         var k = key(delta);
-        if (traversible(grid[delta.y][delta.x]) && closed.get(k) == null) {
+        if (traversible(grid[delta.y][delta.x].type, delta) && closed.get(k) == null) {
           var pt : PTile = { coord: delta, parent: t, f: heuristic(delta, dest), g: 1 + t.g };
 
           var onOp = onOpen.get(k);
@@ -364,6 +363,7 @@ class Factory
   }
 }
 
+// TODO remove this class, only need Terrain
 class Tile
 {
   public static inline var elevMax = 100;

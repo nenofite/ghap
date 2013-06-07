@@ -56,7 +56,13 @@ class Utils
 
   public static inline function equals(a : World.Coord, b : World.Coord) : Bool
   {
-    return a.x == b.x && a.y == b.y;
+    return if (a == null || b == null) a == b
+           else a == b || (a.x == b.x && a.y == b.y);
+  }
+  
+  public static inline function add(a : World.Coord, b : World.Coord) : World.Coord
+  {
+    return { x: a.x + b.x, y: a.y + b.y };
   }
 
   public static function distanceTo(a : World.Coord, b : World.Coord) : Float

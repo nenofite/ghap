@@ -110,7 +110,6 @@ class View
     canvas.addEventListener("mousedown", function(ev) {
       if (ev.which == 1) {
         ev.preventDefault();
-        //~ dragStart = { x: ev.clientX, y: ev.clientY };
         canvas.focus();
         
         var gridX = Math.floor((ev.clientX + viewX) / Terrain.spriteW);
@@ -123,7 +122,6 @@ class View
     canvas.addEventListener("touchstart", function(ev) {
       ev.preventDefault();
       var t = ev.targetTouches[0];
-      //~ dragStart = { x: t.clientX, y: t.clientY };
       canvas.focus();
       
       var gridX = Math.floor((t.clientX + viewX) / Terrain.spriteW);
@@ -208,7 +206,7 @@ class View
     binder.bind(67, center);
     btn_center.onclick = center;
 
-    binder.uncaught(function(k) throw "Key: " + k);
+    //~ binder.uncaught(function(k) throw "Key: " + k);
 
     c.bind("keydown", function(ev) binder.call(ev.which));
 

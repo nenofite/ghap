@@ -97,7 +97,7 @@ class Ent
   
   /// How much XP is needed to level up from n - 1 to n, where n is the
   /// given level?
-  /// Note that xp is not cumulative, it resets to 0 after every level up
+  /// Note that xp is not cumulative, it is consumed by leveling up
   public static function xpForLevel(level : Int) : Int
   {
     return (level - 1) * 3;
@@ -315,18 +315,95 @@ enum PlayerDir
   Dismount;
 }
 
-class Walrus extends Ent
+class Ai extends Ent
+{
+  var traversible : Terrain -> Bool;
+  
+  var prevDest : World.Coord = null;
+  var path : Array<World.Coord> = null;
+  var pathIndex : Int;
+  
+  function new(sprite, traversible)
+  {
+    super(sprite);
+    this.traversible = traversible;
+  }
+  
+  /// Abstract, must be overridden
+  /// Where this Ai wants to go
+  /// This can be null, in which case Ai.update() will not do anything
+  function destination(w : World) : World.Coord
+  {
+    throw "Destination not implemented in " + Type.getClassName(Type.getClass(this));
+    return null;
+  }
+  
+  /// Moves the Ai toward its given destination
+  /// Will attempt to move in a beeline, but it hits obstacles it will
+  /// route a path
+  /// This will call destination() at most once per call
+  /// Whenever this is called, the Ai is not at its requested destination, and
+  /// there exists a route between it and its destination, this method
+  /// will move the Ai one square.  There are no cases where it will wait
+  /// a tick before moving
+  public override function update(w : World)
+  {
+    var dest = destination(w);
+    if (dest == null) {
+      path = null;
+      prevDest = null;
+      return;
+    }
+    if (!prevDest.equals(dest)) {
+      path = null;
+      prevDest = dest;
+    }
+    
+    if (coord.equals(dest)) {
+      path = null;
+      return;
+    }
+    
+    var dir = if (path == null) null else path[pathIndex--];
+    
+    if (dir != null && traversible(w.tileAt(dir).type) && w.entAt(dir) == null) {
+      w.moveEnt(coord, dir);
+    } else {
+      path = w.path(coord, dest, function(t, c) return traversible(t) && w.entAt(c) == null);
+      if (path == null) return;
+      pathIndex = path.length - 3; // skip $-1 because that is our current coord; skip $-2 because we will use it right now
+      w.moveEnt(coord, path[path.length - 2]);
+    }
+  }
+}
+
+class Walrus extends Ai
 {
   public function new(level)
   {
-    super(Images.i.walrus);
+    super(Images.i.walrus, Ent.isAmphTraversible);
     setLevel(level);
   }
+  
+  /// Goes to first Zombie within 6 radius of here, otherwise toward
+  /// Player if between 3 and 9 tiles inclusive from here
+  override function destination(w : World) : World.Coord
+  {
+    for (c in coord.getRadius(6)) {
+      var e = w.entAt(c);
+      if (e != null && e.alive && Type.getClass(e) == Zombie) return c;
+    }
+    
+    var playerCoord = Player.p.coord;
+    var dist = coord.distanceTo(playerCoord);
+    if (dist <= 9 && dist >= 3) return playerCoord;
+    
+    return null;
+  }
 
+  /// Battles one adjacent Zombie, otherwise calls super
   public override function update(w : World)
   {
-    var player = Player.p;
-
     for (c in coord.getNeighbors()) {
       if (w.inBounds(c)) {
         var e = w.entAt(c);
@@ -337,38 +414,15 @@ class Walrus extends Ent
       }
     }
 
-    for (c in coord.getRadius(6)) {
-      if (w.inBounds(c)) {
-        var e = w.entAt(c);
-        if (e != null && e.alive && Type.getClass(e) == Zombie) {
-          var dir = coord.directionTo(e.coord);
-          dir.x += coord.x;
-          dir.y += coord.y;
-          if (w.entAt(dir) == null && Ent.isAmphTraversible(w.tileAt(dir).type))
-            w.moveEnt(coord, dir);
-          return;
-        }
-      }
-    }
-
-    var dist = coord.distanceTo(player.coord);
-    if (dist < 10 && dist >= 3) {
-      Ent.walriFollowing++;
-      var dir = coord.directionTo(player.coord);
-      dir.x += coord.x;
-      dir.y += coord.y;
-      if (w.inBounds(dir) && w.entAt(dir) == null && Ent.isAmphTraversible(w.tileAt(dir).type))
-        w.moveEnt(coord, dir);
-      return;
-    }
+    super.update(w);
   }
 }
 
-class Zombie extends Ent
+class Zombie extends Ai
 {
   public function new(level)
   {
-    super(Images.i.zombie);
+    super(Images.i.zombie, Ent.isWalkTraversible);
     setLevel(level);
   }
   
@@ -379,7 +433,16 @@ class Zombie extends Ent
     super.setLevel(lev);
     sprite = if (lev >= 3) Images.i.zombieTophat else Images.i.zombie;
   }
+  
+  /// Goes toward the player when they are within 9 units inclusive away
+  override function destination(w : World) : World.Coord
+  {
+    var playerCoord = Player.p.coord;
+    var dist = coord.distanceTo(playerCoord);
+    return if (dist <= 9) playerCoord else null;
+  }
 
+  /// Attacks the player when adjacent, otherwise calls super
   public override function update(w : World)
   {
     var player = Player.p;
@@ -390,15 +453,8 @@ class Zombie extends Ent
         return;
       }
     }
-
-    var dist = coord.distanceTo(player.coord);
-    if (dist < 10 && dist >= 2) {
-      var dir = coord.directionTo(player.coord);
-      dir.x += coord.x;
-      dir.y += coord.y;
-      if (w.inBounds(dir) && w.entAt(dir) == null && Ent.isWalkTraversible(w.tileAt(dir).type))
-        w.moveEnt(coord, dir);
-    }
+    
+    super.update(w);
   }
 }
 
