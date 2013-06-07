@@ -115,8 +115,7 @@ class View
         var gridX = Math.floor((ev.clientX + viewX) / Terrain.spriteW);
         var gridY = Math.floor((ev.clientY + viewY) / Terrain.spriteH);
         var ent = world.entAt2(gridX, gridY);
-        if (selection != null) deselect();
-        if (ent != null) select(ent);
+        if (ent != null) select(ent) else if (selection != null) deselect();
       }
     });
     canvas.addEventListener("touchstart", function(ev) {
@@ -127,8 +126,7 @@ class View
       var gridX = Math.floor((t.clientX + viewX) / Terrain.spriteW);
       var gridY = Math.floor((t.clientY + viewY) / Terrain.spriteH);
       var ent = world.entAt2(gridX, gridY);
-      if (selection != null) deselect();
-      if (ent != null) select(ent);
+      if (ent != null) select(ent) else if (selection != null) deselect();
     });
 
     var mouseup = function(ev) {
@@ -513,21 +511,23 @@ class View
     sel_level.innerHTML = "Level " + selection.level;
   }
   
-  /// Assuming selection is null:
+  /// If selection was null, fades in the selection box
   /// Sets selection to sel
-  /// Fades in the selection box
   /// Makes world dirty
   function select(sel : Ent)
   {
-    selection = sel;
-    selectionDiv.style.display = "block";
-    world.makeDirty();
+    if (selection == null) {
+      selectionDiv.style.display = "block";
+      
+      (cast js.Lib.window).setTimeout(function() {
+        if (selection != null) {
+          selectionDiv.style.opacity = 1;
+        }
+      }, 100);
+    }
     
-    (cast js.Lib.window).setTimeout(function() {
-      if (selection != null) {
-        selectionDiv.style.opacity = 1;
-      }
-    }, 100);
+    selection = sel;
+    world.makeDirty();
   }
   
   /// Assuming selection is not null:

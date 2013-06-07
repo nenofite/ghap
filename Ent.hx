@@ -350,11 +350,9 @@ class Ai extends Ent
     return null;
   }
   
-  /// Moves the Ai toward its given destination
-  /// Will attempt to move in a beeline, but it hits obstacles it will
-  /// route a path
+  /// Moves the Ai toward its given destination by pathfinding
   /// This will call destination() at most once per call
-  /// Whenever this is called, the Ai is not at its requested destination, and
+  /// Whenever this is called, the Ai is not already at its requested destination, and
   /// there exists a route between it and its destination, this method
   /// will move the Ai one square.  There are no cases where it will wait
   /// a tick before moving
