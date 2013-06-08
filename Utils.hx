@@ -102,18 +102,28 @@ class Utils
             { x: c.x - 1, y: c.y     }];
   }
 
-  /// Returns all coordinates within center.x - r, center.x + r inclusive
+  /// Iterates all coordinates within center.x - r, center.x + r inclusive
   /// and center.y - r, center.y + r inclusive
   /// Note this is actually a square, not a circle
-  public static function getRadius(center : World.Coord, r : Int) : Array<World.Coord>
+  public static function getRadius(center : World.Coord, r : Int) : Iterator<World.Coord>
   {
-    var arr = new Array<World.Coord>();
-    for (xd in -r...r) {
-      for (yd in -r...r) {
-        var c = { x: center.x + xd, y: center.y + yd };
-        arr.push(c);
+    var iter : Dynamic = {
+      xd: -r,
+      yd: -r,
+    };
+    
+    iter.next = function() : World.Coord {
+      if (iter.yd > r) {
+        iter.yd = -r;
+        ++iter.xd;
       }
+      return { x: cast center.x + iter.xd, y: cast center.y + iter.yd++ };
+    };
+    
+    iter.hasNext = function() : Bool {
+      return iter.xd < r || iter.yd <= r;
     }
-    return arr;
+    
+    return iter;
   }
 }
