@@ -104,8 +104,7 @@ class Utils
 
   /// Iterates all coordinates within center.x - r, center.x + r inclusive
   /// and center.y - r, center.y + r inclusive
-  /// Note this is actually a square, not a circle
-  public static function getRadius(center : World.Coord, r : Int) : Iterator<World.Coord>
+  public static function getSquare(center : World.Coord, r : Int) : Iterator<World.Coord>
   {
     var iter : Dynamic = {
       xd: -r,
@@ -124,6 +123,37 @@ class Utils
       return iter.xd < r || iter.yd <= r;
     }
     
+    return iter;
+  }
+  
+  /// Iterates over all the coords whose distance to center <= r
+  /// Does this by bootstrapping a getSquare() iterator
+  public static function getRadius(center : World.Coord, r : Int) : Iterator<World.Coord>
+  {
+    var iter : Dynamic = getSquare(center, r);
+    var sHasNext = iter.hasNext; // grab the square iterator functions
+    var sNext = iter.next; // this is safe because getSquare() does not use 'this'
+    
+    iter.loadedNext = null;
+    
+    iter.next = function() : World.Coord {
+      var previous = iter.loadedNext;
+      iter.loadedNext = null;
+      
+      while (sHasNext()) {
+        var c = sNext();
+        if (distanceTo(c, center) <= r) {
+          iter.loadedNext = c;
+          break;
+        }
+      }
+      
+      return previous;
+    };
+    
+    iter.hasNext = function() return iter.loadedNext != null;
+    
+    iter.next(); // load up the first value
     return iter;
   }
 }

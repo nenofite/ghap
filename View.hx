@@ -370,6 +370,15 @@ class View
               context.fillRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
             } else {
               context.drawImage(tile.type.tile, lx, ly);
+              
+              if (selection != null) {
+                var selCoord = selection.coord;
+                if (selCoord.distanceTo({ x: ax, y: ay }) <= selection.viewDist) {
+                  context.fillStyle = "rgba(255, 0, 0, 0.25)";
+                  context.fillRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
+                }
+              }
+              
               var diff = dist - ViewDist;
               if (diff > 0) {
                 context.fillStyle = "black";

@@ -11,12 +11,15 @@ class Ent
   public var alive : Bool;
   public var level(default, null) : Int;
   
+  public var viewDist(default, null) : Int;
+  
   var xp : Int;
 
-  public function new(sprite)
+  public function new(sprite, viewDist)
   {
     alive = true;
     this.sprite = sprite;
+    this.viewDist = viewDist;
     level = 1;
     xp = 0;
   }
@@ -60,6 +63,13 @@ class Ent
   public function die(w : World)
   {
     alive = false;
+  }
+  
+  /// Iterate over the coords within viewDist
+  /// Uses getRadius()
+  public inline function getVisible() : Iterator<World.Coord>
+  {
+    return coord.getRadius(viewDist);
   }
   
   /// increments xp, then levels up to the resulting level
@@ -113,7 +123,7 @@ class Player extends Ent
 
   public function new()
   {
-    super(Images.i.player);
+    super(Images.i.player, View.ViewDist);
     p = this;
     onWalrus = null;
   }
@@ -334,9 +344,9 @@ class Ai extends Ent
   var path : Array<World.Coord> = null;
   var pathIndex : Int;
   
-  function new(sprite, traversible)
+  function new(sprite, viewDist, traversible)
   {
-    super(sprite);
+    super(sprite, viewDist);
     this.traversible = traversible;
   }
   
@@ -394,26 +404,26 @@ class Walrus extends Ai
 {
   public function new(level)
   {
-    super(Images.i.walrus, Ent.isAmphTraversible);
+    super(Images.i.walrus, 8, Ent.isAmphTraversible);
     setLevel(level);
   }
   
-  /// Goes to first Zombie within 6 radius of here, otherwise toward
-  /// Player if between 3 and 9 tiles inclusive from here
+  /// Goes to first Zombie within view, otherwise toward
+  /// Player when in view but farther than 2 from here
   /// Increments walriFollowing when the Player's coord is chosen or
   /// the Player's coord would have been chosen but the Walrus is too close
   override function destination(w : World) : World.Coord
   {
-    for (c in coord.getRadius(6)) {
+    for (c in getVisible()) {
       var e = w.entAt(c);
       if (e != null && e.alive && Type.getClass(e) == Zombie) return c;
     }
     
     var playerCoord = Player.p.coord;
     var dist = coord.distanceTo(playerCoord);
-    if (dist <= 9) {
+    if (dist <= viewDist) {
       Ent.walriFollowing++;
-      if (dist >= 3) return playerCoord;
+      if (dist > 2) return playerCoord;
     }
     
     return null;
@@ -440,7 +450,7 @@ class Zombie extends Ai
 {
   public function new(level)
   {
-    super(Images.i.zombie, Ent.isWalkTraversible);
+    super(Images.i.zombie, 6, Ent.isWalkTraversible);
     setLevel(level);
   }
   
@@ -452,12 +462,12 @@ class Zombie extends Ai
     sprite = if (lev >= 3) Images.i.zombieTophat else Images.i.zombie;
   }
   
-  /// Goes toward the player when they are within 9 units inclusive away
+  /// Goes toward the player when they are within view
   override function destination(w : World) : World.Coord
   {
     var playerCoord = Player.p.coord;
     var dist = coord.distanceTo(playerCoord);
-    return if (dist <= 9) playerCoord else null;
+    return if (dist <= viewDist) playerCoord else null;
   }
 
   /// Attacks the player when adjacent, otherwise calls super
@@ -480,7 +490,7 @@ class Panda extends Ent
 {
   public function new()
   {
-    super(Images.i.panda);
+    super(Images.i.panda, 3);
     Ent.panda = this;
   }
 
