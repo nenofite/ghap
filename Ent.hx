@@ -213,6 +213,7 @@ class Player extends Ent
     var c = e.coord;
     w.removeEnt(c);
     w.moveEnt(coord, c);
+    if (e.level >= 3) Achievement.aFineSteed.qualify();
   }
 
   public function dismountWalrus(w : World)

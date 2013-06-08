@@ -21,6 +21,7 @@ class Images
     background: "world bg.png",
     
     levelup: "level up.png", // have it preloaded even though we won't use the JS Image
+    aFineSteed: "achv/fine steed.png",
     aFirstKill: "achv/first kill.png",
     aPopular: "achv/popular.png",
   };

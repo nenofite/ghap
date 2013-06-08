@@ -1,5 +1,6 @@
 class Achievement
 {
+  public static var aFineSteed = new Achievement("Fine Steed", "Mount a walrus of at least level 3.", Images.i.aFineSteed);
   public static var aFirstKill = new Achievement("First Kill", "Defeat your first zombie.", Images.i.aFirstKill);
   public static var aPopular = new Achievement("Popular", "Have at least 10 walri follow you.", Images.i.aPopular);
 
