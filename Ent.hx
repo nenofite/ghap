@@ -180,6 +180,7 @@ class Player extends Ent
 
   public override function die(w : World)
   {
+    if (coord.distanceTo(Ent.panda.coord) <= 3) Achievement.aRageQuit.qualify();
     if (onWalrus != null) dismountWalrus(w);
     super.die(w);
     w.lose();

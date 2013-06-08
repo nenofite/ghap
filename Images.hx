@@ -23,6 +23,7 @@ class Images
     levelup: "level up.png", // have it preloaded even though we won't use the JS Image
     aFineSteed: "achv/fine steed.png",
     aFirstKill: "achv/first kill.png",
+    aRageQuit: "achv/rage quit.png",
     aPopular: "achv/popular.png",
   };
 
