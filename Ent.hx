@@ -353,7 +353,7 @@ class Ai extends Ent
   /// Moves the Ai toward its given destination by pathfinding
   /// This will call destination() at most once per call
   /// Whenever this is called, the Ai is not already at its requested destination, and
-  /// there exists a route between it and its destination, this method
+  /// there exists a route between it and a point closer to its destination, this method
   /// will move the Ai one square.  There are no cases where it will wait
   /// a tick before moving
   public override function update(w : World)
@@ -374,6 +374,8 @@ class Ai extends Ent
       return;
     }
     
+    if (pathIndex < 0) path = null;
+    
     var dir = if (path == null) null else path[pathIndex--];
     
     if (dir != null && traversible(w.tileAt(dir).type) && w.entAt(dir) == null) {
@@ -381,7 +383,7 @@ class Ai extends Ent
     } else {
       var fn = function(terr, c) return coord.distanceTo(c) <= PathDist && traversible(terr) && w.entAt(c) == null;
       path = w.path(coord, dest, fn);
-      if (path == null) return;
+      if (path.length < 2) return;
       pathIndex = path.length - 3; // skip $-1 because that is our current coord; skip $-2 because we will use it right now
       w.moveEnt(coord, path[path.length - 2]);
     }

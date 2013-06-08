@@ -244,7 +244,10 @@ class World
   /// Use A* to calculate a path
   /// Can travel in all 8 directions
   /// Uses traversible to determine if a tile is available for the path
-  /// Returned path starts with dest and ends with start (it's in reverse)
+  /// If a path can be found:
+  ///  Returned path starts with dest and ends with start (it's in reverse)
+  /// If no path can be found:
+  ///  Path starts with closest point possible, ends with start (in reverse)
   public function path(start : Coord, dest : Coord, traversible : Terrain -> Coord -> Bool) : Path
   {
     var open = new Heap<PTile>(function(a, b) return (b.g + b.f) - (a.g + a.f));
@@ -255,7 +258,8 @@ class World
 
     var closed = new Map<PTile>();
 
-    var path : PTile = null;
+    var path : PTile = null; // whichever touches the destination
+    var best : PTile = openpt; // whichever gets closest to the destination (using heuristic)
     var t : PTile;
 
     while (path == null && (t = open.pop()) != null) {
@@ -273,6 +277,8 @@ class World
         if (traversible(grid[delta.y][delta.x].type, delta) && closed.get(k) == null) {
           var pt : PTile = { coord: delta, parent: t, f: heuristic(delta, dest), g: 1 + t.g };
 
+          if (pt.f < best.f) best = pt;
+
           var onOp = onOpen.get(k);
           if (onOp == null) {
             open.add(pt);
@@ -288,10 +294,18 @@ class World
       }
     }
 
-    if (path == null) return null;
-
-    var fullPath : Path = [dest, path.coord];
-    while ((path = path.parent) != null) fullPath.push(path.coord);
+    var chosen : PTile;
+    var fullPath : Path;
+    
+    if (path != null) {
+      chosen = path;
+      fullPath = [dest, path.coord];
+    } else {
+      chosen = best;
+      fullPath = [best.coord];
+    }
+    
+    while ((chosen = chosen.parent) != null) fullPath.push(chosen.coord);
     return fullPath;
   }
 
