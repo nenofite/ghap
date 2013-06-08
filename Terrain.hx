@@ -36,7 +36,7 @@ class Terrain
     //~ water = new Terrain("Water", ImgLoader.get("water.png"), []);
     //~ rock = new Terrain("Rock", ImgLoader.get("rock.png"), [{ sprite: rock_spr, prob: 0.5 }]);
 
-    forest = new Terrain("Forest", Images.i.grassBg, [{ sprite: Images.i.tree, prob: 0.8 }]);
+    forest = new Terrain("Forest", Images.i.grassBg, [{ sprite: Images.i.tree, prob: 0.8 }, { sprite: Images.i.grass, prob: 0.1 }, { sprite: Images.i.rock, prob: 0.05 }]);
     grass = new Terrain("Grass", Images.i.grassBg, [{ sprite: Images.i.rock, prob: 0.05 }, { sprite: Images.i.grass, prob: 0.8 }]);
     water = new Terrain("Water", Images.i.waterBg, []);
     rock = new Terrain("Rock", Images.i.rockBg, [{ sprite: Images.i.rock, prob: 0.5 }]);
