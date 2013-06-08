@@ -1,6 +1,7 @@
 body {
   background: black;
   font: 16px "Roboto Slab", serif;
+  overflow: hidden;
 }
 
 body, canvas {

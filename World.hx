@@ -180,7 +180,6 @@ class World
     clearLog();
     Ent.walriFollowing = if (Ent.Player.p.onWalrus != null) 1 else 0;
 
-    //~ var coords = ents.keys().flatten();
     var coords = Ent.Player.p.coord.getRadius(UpdateDist);
     var updateEnts = new Array<Ent>();
     for (c in coords) {

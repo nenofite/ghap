@@ -371,11 +371,9 @@ class View
             } else {
               context.drawImage(tile.type.tile, lx, ly);
               var diff = dist - ViewDist;
-              if (diff >= 0) {
+              if (diff > 0) {
                 context.fillStyle = "black";
-                diff /= 3;
-                if (diff > 1) diff = 1;
-                context.globalAlpha = diff;
+                context.globalAlpha = if (diff > 3) 1 else 0.5 + diff / 3 / 2;
                 context.fillRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
                 context.globalAlpha = 1;
               }
@@ -461,9 +459,9 @@ class View
     //}
     if (resized) resize();
     lookAt(Ent.Player.p.coord);
+    if (selection != null) updateSelection();
     draw();
     updateCompass();
-    if (selection != null) updateSelection();
     world.makeClean();
   }
 
@@ -493,12 +491,14 @@ class View
   }
   
   /// Assuming selection is not null:
+  /// If selection's coord is null or outside of Player's view, calls
+  /// deselect() and returns
   /// Places the selection box over where the Ent is on-screen
   /// Writes Ent's name and level inside the selection box
   function updateSelection()
   {
     var c = selection.coord;
-    if (c == null) {
+    if (c == null || c.distanceTo(Ent.Player.p.coord) > ViewDist) {
       deselect();
       return;
     }

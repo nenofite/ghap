@@ -102,6 +102,9 @@ class Utils
             { x: c.x - 1, y: c.y     }];
   }
 
+  /// Returns all coordinates within center.x - r, center.x + r inclusive
+  /// and center.y - r, center.y + r inclusive
+  /// Note this is actually a square, not a circle
   public static function getRadius(center : World.Coord, r : Int) : Array<World.Coord>
   {
     var arr = new Array<World.Coord>();
