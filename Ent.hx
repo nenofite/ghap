@@ -374,14 +374,14 @@ class Ai extends Ent
       prevDest = null;
       return;
     }
-    if (!prevDest.equals(dest)) {
-      path = null;
-      prevDest = dest;
-    }
-    
     if (coord.equals(dest)) {
       path = null;
       return;
+    }
+    
+    if (!prevDest.equals(dest)) {
+      path = null;
+      prevDest = dest;
     }
     
     if (pathIndex < 0) path = null;
@@ -391,9 +391,12 @@ class Ai extends Ent
     if (dir != null && traversible(w.tileAt(dir).type) && w.entAt(dir) == null) {
       w.moveEnt(coord, dir);
     } else {
-      var fn = function(terr, c) return coord.distanceTo(c) <= PathDist && traversible(terr) && w.entAt(c) == null;
+      var fn = function(terr, c) return Ent.Player.p.coord.distanceTo(c) < PathDist && traversible(terr) && w.entAt(c) == null;
       path = w.path(coord, dest, fn);
-      if (path.length < 2) return;
+      if (path.length <= 1) {
+        path = null;
+        return;
+      }
       pathIndex = path.length - 3; // skip $-1 because that is our current coord; skip $-2 because we will use it right now
       w.moveEnt(coord, path[path.length - 2]);
     }
