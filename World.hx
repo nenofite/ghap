@@ -181,10 +181,10 @@ class World
     Ent.walriFollowing = if (Ent.Player.p.onWalrus != null) 1 else 0;
 
     var coords = Ent.Player.p.coord.getSquare(UpdateDist);
-    var updateEnts = new Array<Ent>();
+    var updateEnts : Array<Ent> = [Ent.Player.p];
     for (c in coords) {
       var e = ents.get(key(c));
-      if (e != null && e.coord != null && e.alive) updateEnts.push(e);
+      if (e != null && e != Ent.Player.p && e.coord != null && e.alive) updateEnts.push(e);
     }
     
     for (e in updateEnts) {
