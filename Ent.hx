@@ -52,7 +52,7 @@ class Ent
 
   public function showRoll(r : Int) : String
   {
-    return Type.getClassName(Type.getClass(this)) + " rolls " + r + ".";
+    return getName() + " rolls " + r + ".";
   }
 
   public function roll() : Int
@@ -72,6 +72,14 @@ class Ent
     return coord.getRadius(viewDist);
   }
   
+  /// A human-readable name for this ent, which will be seen
+  /// by the player during gameplay.
+  /// Defaults to class name
+  public function getName() : String
+  {
+    return Type.getClassName(Type.getClass(this));
+  }
+  
   /// increments xp, then levels up to the resulting level
   /// decrements xp with every level up
   /// only calls setLevel() once
@@ -85,14 +93,17 @@ class Ent
       newLevel++;
     }
     
-    if (newLevel != level) setLevel(newLevel);
+    if (newLevel != level) setLevel(newLevel, w);
   }
   
   /// Sets level to lev.  May be overridden to display achievements,
   /// change sprites, or whatever in order to reflect the new level
-  public function setLevel(lev : Int)
+  /// World may be null
+  /// Displays a message in the log
+  public function setLevel(lev : Int, ?w : World)
   {
     level = lev;
+    if (w != null) w.log(World.Log.Xp(getName() + " is now level " + lev + "."));
   }
 
   public static function isWalkTraversible(t : Terrain) : Bool
@@ -197,9 +208,9 @@ class Player extends Ent
   
   /// Runs the super function, then displays a level up banner
   /// Note: always displays banner, regardless of previous level
-  public override function setLevel(lev : Int)
+  public override function setLevel(lev : Int, ?w : World)
   {
-    super.setLevel(lev);
+    super.setLevel(lev, w);
     View.v.levelUpBanner(lev);
   }
 
@@ -410,7 +421,7 @@ class Walrus extends Ai
   public function new(level)
   {
     super(Images.i.walrus, 8, Ent.isAmphTraversible);
-    setLevel(level);
+    setLevel(level, null);
   }
   
   /// Goes to first Zombie within view, otherwise toward
@@ -456,14 +467,14 @@ class Zombie extends Ai
   public function new(level)
   {
     super(Images.i.zombie, 6, Ent.isWalkTraversible);
-    setLevel(level);
+    setLevel(level, null);
   }
   
   /// Calls the super first
   /// Updates the sprite: if level >= 3, tophat, otherwise normal
-  public override function setLevel(lev : Int)
+  public override function setLevel(lev : Int, ?w : World)
   {
-    super.setLevel(lev);
+    super.setLevel(lev, w);
     sprite = if (lev >= 3) Images.i.zombieTophat else Images.i.zombie;
   }
   

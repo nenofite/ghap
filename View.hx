@@ -516,7 +516,7 @@ class View
     selectionDiv.style.left = screenX + "px";
     selectionDiv.style.top = screenY + "px";
     
-    sel_name.innerHTML = Type.getClassName(Type.getClass(selection));
+    sel_name.innerHTML = selection.getName();
     sel_level.innerHTML = "Level " + selection.level;
   }
   
