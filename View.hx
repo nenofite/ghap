@@ -138,30 +138,6 @@ class View
       dragStart = null;
     };
 
-    var c = new JQuery(canvas);
-    //~ c.bind("mouseup mouseleave touchend touchleave touchcancel", mouseup);
-//~ 
-    //~ // touchmove
-    //~ c.bind("mousemove", function(ev) {
-      //~ ev.preventDefault();
-//~ 
-      //~ mousePos.x = ev.pageX;
-      //~ mousePos.y = ev.pageY;
-//~ 
-      //~ if (dragStart != null) world.makeDirty();
-    //~ });
-
-    //~ canvas.addEventListener("touchmove", function(ev) {
-      //~ ev.preventDefault();
-//~ 
-      //~ var t = (cast ev).targetTouches[0];
-//~ 
-      //~ mousePos.x = t.clientX;
-      //~ mousePos.y = t.clientY;
-//~ 
-      //~ if (dragStart != null) world.makeDirty();
-    //~ });
-
     dia_win = new Dia("dia_win");
     dia_win.bind({ close: dia_win.hide, restart: restartGame });
     dia_lose = new Dia("dia_lose");
@@ -210,6 +186,7 @@ class View
     
     //~ binder.uncaught(function(k) throw "Key: " + k);
 
+    var c = new JQuery("body");
     c.bind("keydown", function(ev) binder.call(ev.which));
 
     js.Lib.document.getElementById("btn_inst").onclick = cast dia_instructions.show;
