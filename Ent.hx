@@ -74,6 +74,7 @@ class Ent
   
   /// A human-readable name for this ent, which will be seen
   /// by the player during gameplay.
+  /// This should *not* incorporate this Ent's nickname, just its species name
   /// Defaults to class name
   public function getName() : String
   {
@@ -416,8 +417,10 @@ class Ai extends Ent
   }
 }
 
-class Walrus extends Ai
+class Walrus extends Ai, implements Nameable
 {
+  public var name : String;
+
   public function new(level)
   {
     super(Images.i.walrus, 8, Ent.isAmphTraversible);
@@ -523,4 +526,9 @@ class Panda extends Ent
       }
     }
   }
+}
+
+interface Nameable
+{
+  var name : String;
 }

@@ -368,3 +368,13 @@ input:hover, input:focus {
     
     font: 16px "Roboto", sans-serif;
 }
+
+#edit_name_btn {
+    position: absolute;
+    right: 15px;
+    top: 8px;
+}
+#edit_name_btn:hover {
+    background: white;
+    cursor: pointer;
+}

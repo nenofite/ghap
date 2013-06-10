@@ -11,6 +11,7 @@
 <canvas id="canv" width="800" height="600" tabindex="1"></canvas>
 <div id="selection">
   <div id="sel_name"></div>
+  <img id="edit_name_btn" src="edit name.png" alt="Edit Name" title="Edit Name"/>
   <div id="sel_level"></div>
 </div>
 <div id="ctl_pane">
@@ -98,6 +99,11 @@
   <div class="center"><span>Contact us at <a target="_window" href="http://www.bizwacky.com">bizwacky.com</a>.</span></div>
   <div class="center">&copy; Copyright 2013 Ben Tucker.  All rights reserved.</div>
   <div class="center"><a data-bind="close">Close</a></div>
+</div>
+<div class="dia" id="dia_edit_name">
+  <h1>Edit Name</h1>
+  <div class="center"><input id="edit_name_in"/><a data-bind="accept">Accept</a></div>
+  <div class="center"><a data-bind="cancel">Cancel</a></div>
 </div>
 <div class="dia a b" id="dia_loading">
   <h1>Loading...</h1>

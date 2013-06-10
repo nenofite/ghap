@@ -22,6 +22,8 @@ class View
   var selectionDiv : Dynamic;
   var sel_name : Dynamic;
   var sel_level : Dynamic;
+  var edit_name_btn : Dynamic;
+  var edit_name_in : Dynamic;
   public var ul_achv : Dynamic;
 
   var viewX : Int = 0;
@@ -54,6 +56,7 @@ class View
   var dia_change_seed : Dia;
   public var dia_achievements : Dia;
   var dia_about : Dia;
+  var dia_edit_name : Dia;
   
   // move arrows:
   public var arr_u : Dynamic;
@@ -90,6 +93,8 @@ class View
     selectionDiv = js.Lib.document.getElementById("selection");
     sel_name = js.Lib.document.getElementById("sel_name");
     sel_level = js.Lib.document.getElementById("sel_level");
+    edit_name_btn = js.Lib.document.getElementById("edit_name_btn");
+    edit_name_in = js.Lib.document.getElementById("edit_name_in");
     ul_achv = js.Lib.document.getElementById("ul_achv");
 
     //~ viewW = canvas.width = js.Lib.window.innerWidth;
@@ -172,6 +177,10 @@ class View
     dia_achievements.bind({ close: dia_achievements.hide });
     dia_about = new Dia("dia_about");
     dia_about.bind({ close: dia_about.hide });
+    dia_edit_name = new Dia("dia_edit_name");
+    dia_edit_name.bind({ accept: acceptName, cancel: dia_edit_name.hide });
+    
+    edit_name_btn.onclick = editName;
 
     arr_u = js.Lib.document.getElementById("arr_u");
     arr_ur = js.Lib.document.getElementById("arr_ur");
@@ -432,6 +441,9 @@ class View
                 if (selection == ent) {
                   var selImg = Images.i.selection;
                   context.drawImage(selImg, lx - Math.round(selImg.width / 2), ly - Math.round(selImg.height / 2));
+                } else if ((cast ent).name != null) {
+                  var namImg = Images.i.named;
+                  context.drawImage(namImg, lx - Math.round(namImg.width / 2), ly - Math.round(namImg.height / 2));
                 }
               
                 if (!ent.alive) context.globalAlpha = 0.75;
@@ -516,7 +528,15 @@ class View
     selectionDiv.style.left = screenX + "px";
     selectionDiv.style.top = screenY + "px";
     
-    sel_name.innerHTML = selection.getName();
+    if (Std.is(selection, Ent.Nameable)) {
+      var name = (cast selection).name;
+      sel_name.innerHTML = if (name != null) '"' + name + '"' else selection.getName();
+      edit_name_btn.style.display = "block";
+    } else {
+      sel_name.innerHTML = selection.getName();
+      edit_name_btn.style.display = "none";
+    }
+    
     sel_level.innerHTML = "Level " + selection.level;
   }
   
@@ -552,6 +572,33 @@ class View
     (cast js.Lib.window).setTimeout(function() {
       if (selection == null) selectionDiv.style.display = "none";
     }, 500);
+  }
+  
+  /// Sets the name of selection to what the user entered in the input box
+  /// of the "Edit Name" dialog
+  /// WS is trimmed
+  /// If the entry (after trimming) is empty, the name is set to null
+  /// Then the "Edit Name" dialog is hidden and updateSelection() is called
+  function acceptName()
+  {
+    var name = edit_name_in.value.trim();
+    if (name.length == 0) name = null;
+    (cast selection).name = name;
+    
+    dia_edit_name.hide();
+    updateSelection();
+  }
+  
+  /// Prepares and displays the "Edit Name" dialog box for selection
+  /// Sets the value of the name input to selection's current name
+  /// Then shows the dialog
+  function editName()
+  {
+    var name = (cast selection).name;
+    if (name == null) name = "";
+    edit_name_in.value = name;
+    
+    dia_edit_name.show();
   }
 
   public function doneLoading()
