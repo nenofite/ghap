@@ -40,12 +40,6 @@ class View
   var prevTime : Float;
 
   public var binder : KeyBinder;
-  var dragStart : { x : Int, y : Int } = null;
-  var mousePos : { x : Int, y : Int };
-  var arrowKey : Null<Dir> = null;
-
-  var showElevation : Bool = false;
-  var showGrid : Bool = false;
 
   // dialogs:
   var dia_instructions : Dia;
@@ -70,11 +64,6 @@ class View
   public var arr_w : Dynamic;
   
   public var btn_dismount : Dynamic;
-
-  // stats:
-  var s_tiles : Int;
-  var s_sprites : Int;
-  var s_overlays : Int;
 
   var resized : Bool = false;
   
@@ -110,8 +99,6 @@ class View
 
     bgPattern = context.createPattern(Images.i.background, "repeat");
 
-    mousePos = { x: 0, y: 0 };
-
     canvas.addEventListener("mousedown", function(ev) {
       if (ev.which == 1) {
         ev.preventDefault();
@@ -133,10 +120,6 @@ class View
       var ent = world.entAt2(gridX, gridY);
       if (ent != null) select(ent) else if (selection != null) deselect();
     });
-
-    var mouseup = function(ev) {
-      dragStart = null;
-    };
 
     dia_win = new Dia("dia_win");
     dia_win.bind({ close: dia_win.hide, restart: restartGame });
@@ -171,14 +154,6 @@ class View
     btn_dismount = js.Lib.document.getElementById("btn_dismount");
 
     binder = new KeyBinder();
-    //~ binder.bind('H', function() {
-      //~ showElevation = !showElevation;
-      //~ world.makeDirty();
-    //~ });
-    //~ binder.bind('G', function() {
-      //~ showGrid = !showGrid;
-      //~ world.makeDirty();
-    //~ });
     binder.bind(191, dia_instructions.show); // '?'
     binder.bind(65, dia_achievements.show); // 'a'
     //~ binder.bind(69, function() { // 'e'
@@ -313,8 +288,6 @@ class View
 
   public function draw()
   {
-    s_tiles = s_sprites = s_overlays = 0;
-
     var grid = world.iterGrid().map(Utils.flatten).flatten();
 
     context.fillStyle = bgPattern;
@@ -350,34 +323,23 @@ class View
             var tile = r[ax];
             var lx = x * Terrain.spriteW - offX;
             var ly = y * Terrain.spriteH - offY;
-            if (showElevation) {
-              var e = Math.round(tile.elevation * 255 / 100);
-              context.fillStyle = "rgb(" + e + "," + e + "," + e + ")";
-              context.fillRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
-            } else {
-              context.drawImage(tile.type.tile, lx, ly);
+            context.drawImage(tile.type.tile, lx, ly);
               
-              if (selection != null) {
-                var selCoord = selection.coord;
-                if (selCoord.distanceTo({ x: ax, y: ay }) <= selection.viewDist) {
-                  context.fillStyle = "rgba(255, 0, 0, 0.25)";
-                  context.fillRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
-                }
-              }
-              
-              var diff = dist - ViewDist;
-              if (diff > 0) {
-                context.fillStyle = "black";
-                context.globalAlpha = if (diff > 3) 1 else 0.5 + diff / 3 / 2;
+            if (selection != null) {
+              var selCoord = selection.coord;
+              if (selCoord.distanceTo({ x: ax, y: ay }) <= selection.viewDist) {
+                context.fillStyle = "rgba(255, 0, 0, 0.25)";
                 context.fillRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
-                context.globalAlpha = 1;
               }
             }
-            if (showGrid) {
-              context.strokeStyle = "black";
-              context.strokeRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
+            
+            var diff = dist - ViewDist;
+            if (diff > 0) {
+              context.fillStyle = "black";
+              context.globalAlpha = if (diff > 3) 1 else 0.5 + diff / 3 / 2;
+              context.fillRect(lx, ly, Terrain.spriteW, Terrain.spriteH);
+              context.globalAlpha = 1;
             }
-            ++s_tiles;
           }
         }
       }
@@ -409,7 +371,6 @@ class View
               var sprite = spr.sprite;
               if (sprite != null) {
                 context.drawImage(sprite, lx + Math.floor(spr.x - sprite.width / 2), ly + Math.floor(spr.y - sprite.height));
-                ++s_sprites;
               }
 
               context.globalAlpha = 1;
@@ -430,31 +391,15 @@ class View
                   context.globalAlpha = 1;
                   context.drawImage(skull, lx - skullW, ly - skullH);
                 }
-                ++s_overlays;
               }
             }
           }
         }
       }
     }
-
-    showStats();
   }
 
-  function showStats()
-  {
-    //~ stats.innerHTML = "T: " + s_tiles + ", S: " + s_sprites + ", O: " + s_overlays +
-                      //~ "<br/> Ents: " + Lambda.count(world.ents);
-  }
-
-  function animate(/*time : Float*/) {
-    //if (dragStart != null) {
-      //viewX -= mousePos.x - dragStart.x;
-      //viewY -= mousePos.y - dragStart.y;
-      //dragStart.x = mousePos.x;
-      //dragStart.y = mousePos.y;
-      ////~ keep = true;
-    //}
+  function animate() {
     if (resized) resize();
     lookAt(Ent.Player.p.coord);
     if (selection != null) updateSelection();
