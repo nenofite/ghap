@@ -153,16 +153,17 @@ class World
     return old;
   }
 
-  public function moveEnt(from : Coord, to : Coord) : Null<Ent>
+  /// Moves the Ent at 'from' to 'to'
+  /// 'to' must be empty
+  public function moveEnt(from : Coord, to : Coord)
   {
     var e = ents.get(key(from));
-    var old = null;
     if (e != null) {
-      old = removeEnt(to);
+      var old = removeEnt(to);
+      if (old != null) throw "Destination coord contained ent.";
       removeEnt(from);
       addEnt(to, e);
     }
-    return old;
   }
 
   public inline function entAt(c : Coord) : Ent
@@ -193,10 +194,6 @@ class World
     
     if (Ent.walriFollowing >= 10) Achievement.aPopular.qualify();
     
-    //~ for (c in coords) {
-      //~ var e = ents.get(key(c));
-      //~ if (e != null && e.coord != null && e.alive) e.update(this);
-    //~ }
     makeDirty();
   }
 
