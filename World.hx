@@ -165,6 +165,17 @@ class World
       addEnt(to, e);
     }
   }
+  
+  /// Swaps the ents in the given location
+  /// The ent at 'a' will become at 'b', and vice-versa
+  /// Neither coord should be empty
+  public function swapEnts(a : Coord, b : Coord)
+  {
+    var entA = removeEnt(a);
+    var entB = removeEnt(b);
+    addEnt(b, entA);
+    addEnt(a, entB);
+  }
 
   public inline function entAt(c : Coord) : Ent
   {

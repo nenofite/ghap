@@ -161,6 +161,8 @@ class Player extends Ent
               case Walrus:
                 if (onWalrus == null) {
                   mountWalrus(cast e, w);
+                } else {
+                  w.swapEnts(coord, c);
                 }
               case Panda:
                 w.win();
