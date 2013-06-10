@@ -33,6 +33,7 @@ class View
   var viewH : Int = -1;
   
   var selection : Ent = null;
+  var nameSelection : Ent.Nameable;
 
   var factory : World.Factory;
   public var world : World;
@@ -161,7 +162,7 @@ class View
     
     //~ binder.uncaught(function(k) throw "Key: " + k);
 
-    var c = new JQuery("body");
+    var c = new JQuery(canvas);
     c.bind("keydown", function(ev) binder.call(ev.which));
 
     js.Lib.document.getElementById("btn_inst").onclick = cast dia_instructions.show;
@@ -445,21 +446,26 @@ class View
       deselect();
       return;
     }
-    var screenX = Math.round((c.x + 0.5) * Terrain.spriteW) - viewX - 61;
-    var screenY = c.y * Terrain.spriteH - viewY - 52 - 30;
-    selectionDiv.style.left = screenX + "px";
-    selectionDiv.style.top = screenY + "px";
     
     if (Std.is(selection, Ent.Nameable)) {
       var name = (cast selection).name;
       sel_name.innerHTML = if (name != null) '"' + name + '"' else selection.getName();
-      edit_name_btn.style.display = "block";
+      edit_name_btn.style.display = "inline";
     } else {
       sel_name.innerHTML = selection.getName();
       edit_name_btn.style.display = "none";
     }
     
     sel_level.innerHTML = "Level " + selection.level;
+    
+    var screenX = Math.round((c.x + 0.5) * Terrain.spriteW) - viewX;
+    var screenY = c.y * Terrain.spriteH - viewY - 25;
+    
+    var jq = new JQuery(selectionDiv);
+    var halfWidth = Math.round(jq.width() / 2) + 15;
+    
+    selectionDiv.style.left = screenX - halfWidth + "px";
+    selectionDiv.style.bottom = viewH - screenY + "px";
   }
   
   /// If selection was null, fades in the selection box
@@ -500,25 +506,29 @@ class View
   /// of the "Edit Name" dialog
   /// WS is trimmed
   /// If the entry (after trimming) is empty, the name is set to null
-  /// Then the "Edit Name" dialog is hidden and updateSelection() is called
+  /// Then the "Edit Name" dialog is hidden and the world is made dirty
   function acceptName()
   {
-    var name = edit_name_in.value.trim();
+    var name : String = edit_name_in.value.trim();
     if (name.length == 0) name = null;
-    (cast selection).name = name;
+    nameSelection.name = name;
     
     dia_edit_name.hide();
-    updateSelection();
+    world.makeDirty();
   }
   
   /// Prepares and displays the "Edit Name" dialog box for selection
   /// Sets the value of the name input to selection's current name
+  /// Sets nameSelection to selection (in case the user changes selection
+  /// before closing the dialog)
   /// Then shows the dialog
   function editName()
   {
     var name = (cast selection).name;
     if (name == null) name = "";
     edit_name_in.value = name;
+    
+    nameSelection = cast selection;
     
     dia_edit_name.show();
   }

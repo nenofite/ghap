@@ -68,6 +68,8 @@ class Dia
       (cast js.Lib.window).setTimeout(function() {
         if (!showing) el.removeClass("a");
       }, 500);
+      
+      View.v.canvas.focus();
     }
   }
 

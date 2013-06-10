@@ -342,8 +342,8 @@ input:hover, input:focus {
 
 #selection {
     position: absolute;
-    width: 120px;
-    height: 50px;
+    max-width: 350px;
+    padding: 5px 15px;
     border: 1px solid white;
     display: none;
     
@@ -355,26 +355,20 @@ input:hover, input:focus {
     transition: opacity 0.5s;
 }
 #sel_name {
-    position: absolute;
-    top: 5px;
-    left: 15px;
-    
     font: 18px "Roboto Slab", serif;
 }
 #sel_level {
-    position: absolute;
-    bottom: 5px;
-    left: 15px;
-    
     font: 16px "Roboto", sans-serif;
 }
 
 #edit_name_btn {
-    position: absolute;
-    right: 15px;
-    top: 8px;
+    margin-left: 5px;
 }
 #edit_name_btn:hover {
     background: white;
     cursor: pointer;
+}
+
+#edit_name_in {
+    width: 200px;
 }
