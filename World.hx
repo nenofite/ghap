@@ -361,7 +361,11 @@ class Factory
     f.addTerrain(Terrain.water, 4);
 
     f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(r) return Ent.Player.p);
-    f.addEnt(1, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) <= WALRUS_DIST, function(r) return new Ent.Walrus(1));
+    f.addEnt(1, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) <= WALRUS_DIST, function(r) {
+      var w = new Ent.Walrus(1);
+      w.name = "Bessy";
+      return w;
+    });
     f.addEnt(100, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(r) return new Ent.Walrus(Math.floor(r.next() * 3) + 1));
     f.addEnt(100, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= ZOMBIE_DIST, function(r) return new Ent.Zombie(Math.floor(r.next() * 5) + 1));
     f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= PANDA_DIST, function(r) return new Ent.Panda());
