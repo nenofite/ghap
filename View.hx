@@ -592,7 +592,7 @@ class View
     
     var type = js.Lib.document.createElement("div");
     type.className = "type";
-    type.innerHTML = "LEVEL-UP";
+    type.innerHTML = "Level-Up";
     div.appendChild(type);
     
     var levelup = js.Lib.document.createElement("div");

@@ -48,7 +48,7 @@ class Achievement
     
     var type = js.Lib.document.createElement("div");
     type.className = "type";
-    type.innerHTML = "ACHIEVEMENT";
+    type.innerHTML = "Achievement";
     div.appendChild(type);
     
     var a_title = js.Lib.document.createElement("div");
