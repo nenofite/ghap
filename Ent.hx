@@ -207,7 +207,7 @@ class Ent
   /// Note that xp is not cumulative, it is consumed by leveling up
   public static function xpForLevel(level : Int) : Int
   {
-    return (level - 1) * 3;
+    return (level - 1) * 6;
   }
 }
 

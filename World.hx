@@ -45,7 +45,7 @@ class World
                     y: Math.floor(rand.next() * grid.length) };
 
           if (inBounds(c) && em.matches(c, this)) {
-            addEnt(c, em.make(rand));
+            addEnt(c, em.make(c, rand));
             break;
           }
         }
@@ -360,17 +360,23 @@ class Factory
     f.addTerrain(Terrain.rock, 0.2);
     f.addTerrain(Terrain.water, 4);
 
-    f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(r) return Ent.Player.p);
-    f.addEnt(1, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) <= WALRUS_DIST, function(r) {
-      var w = new Ent.Walrus(1);
-      w.name = "Bessy";
-      return w;
-    });
-    f.addEnt(100, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(r) return new Ent.Walrus(Math.floor(r.next() * 3) + 1));
-    f.addEnt(100, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= ZOMBIE_DIST, function(r) return new Ent.Zombie(Math.floor(r.next() * 5) + 1));
-    f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= PANDA_DIST, function(r) return new Ent.Panda());
-    f.addEnt(15, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.panda.coord) <= PANDA_MOB_DIST1, function(r) return new Ent.Zombie(Math.floor(r.next() * 5) + 3));
-    f.addEnt(30, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.panda.coord) <= PANDA_MOB_DIST2, function(r) return new Ent.Zombie(Math.floor(r.next() * 5) + 1));
+    f.addEnt(1, 
+      function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), 
+      function(c, r) return Ent.Player.p);
+    f.addEnt(1, 
+      function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) <= WALRUS_DIST,
+      function(c, r) {
+        var w = new Ent.Walrus(1);
+        w.name = "Bessy";
+        return w;
+      });
+      
+    var distLevel : Coord -> Rand -> Int = function(c, r) return Math.floor(c.distanceTo(Ent.Player.p.coord) / 50 + r.next() * 2) + 1;
+    
+    f.addEnt(100, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(c, r) return new Ent.Walrus(distLevel(c, r)));
+    f.addEnt(150, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(c, r) return new Ent.Zombie(distLevel(c, r) + 1));
+      
+    f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= PANDA_DIST, function(c, r) return new Ent.Panda());
 
     return f;
   }
@@ -381,7 +387,7 @@ class Factory
     mix.push({ type: type, prob: prob });
   }
 
-  public function addEnt(num : Int, matches : Coord -> World -> Bool, make : Rand -> Ent)
+  public function addEnt(num : Int, matches : Coord -> World -> Bool, make : Coord -> Rand -> Ent)
   {
     entMix.push({ num: num, matches: matches, make: make });
   }
@@ -431,7 +437,7 @@ typedef Overlay = { sprite : Dynamic, coord : Coord };
 typedef Coord = { x : Int, y : Int };
 
 typedef TerrainSpec = { type : Terrain, prob : Float };
-typedef EntSpec = { num : Int, matches : Coord -> World -> Bool, make : Rand -> Ent };
+typedef EntSpec = { num : Int, matches : Coord -> World -> Bool, make : Coord -> Rand -> Ent };
 
 enum Log
 {
