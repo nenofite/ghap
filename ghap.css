@@ -86,6 +86,10 @@ input:hover, input:focus {
   list-style: url("xp.png");
 }
 
+#battle li.hp {
+  list-style: url("hp.png");
+}
+
 #battle li.closing {
   opacity: 0;
 }
@@ -371,4 +375,76 @@ input:hover, input:focus {
 
 #edit_name_in {
     width: 200px;
+}
+
+#stats {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    width: 400px;
+    height: 80px;
+    margin-left: -200px;
+    border: 1px solid black;
+    
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+#curr_tag {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+
+    opacity: 0.5;
+    font: 16px "Roboto", sans-serif;
+    text-transform: uppercase;
+}
+#curr {
+    position: absolute;
+    top: 20px;
+    left: 5px;
+
+    font: bold 30px "Roboto", serif;
+}
+
+#next_tag {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    opacity: 0.5;
+    font: 16px "Roboto", sans-serif;
+    text-transform: uppercase;
+}
+#next {
+    position: absolute;
+    top: 20px;
+    right: 5px;
+
+    font: bold 30px "Roboto", serif;
+}
+
+#bar_wrap {
+    position: absolute;
+    height: 20px;
+    top: 30px;
+    left: 40px;
+    right: 40px;
+    border: 1px solid black;
+    
+    background: rgba(0, 0, 0, 0.5);
+}
+#bar {
+    height: 100%;
+    
+    background: rgba(255, 255, 255, 0.75);
+    
+    transition: width 0.5s;
+}
+
+#health {
+    margin: 55px auto 0;
+    height: 25px;
+    text-align: center;
 }

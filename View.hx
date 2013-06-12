@@ -25,6 +25,11 @@ class View
   var edit_name_btn : Dynamic;
   var edit_name_in : Dynamic;
   public var ul_achv : Dynamic;
+  
+  var curr_lev : Dynamic;
+  var next_lev : Dynamic;
+  var lev_bar : Dynamic;
+  var health : Dynamic;
 
   var viewX : Int = 0;
   var viewY : Int = 0;
@@ -86,6 +91,11 @@ class View
     edit_name_btn = js.Lib.document.getElementById("edit_name_btn");
     edit_name_in = js.Lib.document.getElementById("edit_name_in");
     ul_achv = js.Lib.document.getElementById("ul_achv");
+    
+    curr_lev = js.Lib.document.getElementById("curr");
+    next_lev = js.Lib.document.getElementById("next");
+    lev_bar = js.Lib.document.getElementById("bar");
+    health = js.Lib.document.getElementById("health");
 
     //~ viewW = canvas.width = js.Lib.window.innerWidth;
     //~ viewH = canvas.height = js.Lib.window.innerHeight;
@@ -266,6 +276,9 @@ class View
       case Xp(s):
         li.className = "xp";
         li.innerHTML = s;
+      case Hp(s):
+        li.className = "hp";
+        li.innerHTML = s;
       }
 
       b.insertBefore(li, b.firstChild);
@@ -406,6 +419,7 @@ class View
     if (selection != null) updateSelection();
     draw();
     updateCompass();
+    updateStats();
     world.makeClean();
   }
 
@@ -466,6 +480,24 @@ class View
     
     selectionDiv.style.left = screenX - halfWidth + "px";
     selectionDiv.style.bottom = viewH - screenY + "px";
+  }
+  
+  /// Updates the XP and health bar with the player's current stats
+  function updateStats()
+  {
+    var p = Ent.Player.p;
+    
+    curr_lev.innerHTML = p.level;
+    next_lev.innerHTML = p.level + 1;
+    lev_bar.style.width = p.xpProgress() * 100 + "%";
+    
+    health.innerHTML = "";
+    
+    for (i in 0...p.maxHp) {
+      var img = js.Lib.document.createElement("img");
+      (cast img).src = if (i < p.hp) Images.i.heart.src else Images.i.emptyHeart.src;
+      health.appendChild(img);
+    }
   }
   
   /// If selection was null, fades in the selection box

@@ -438,4 +438,5 @@ enum Log
   Error(msg : String);
   Battle(msg : String);
   Xp(msg : String);
+  Hp(msg : String);
 }

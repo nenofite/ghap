@@ -13,28 +13,53 @@ class Ent
   
   public var viewDist(default, null) : Int;
   
-  var xp : Int;
+  public var hp : Int;
+  public var maxHp : Int;
+  public var xp : Int;
+  var healTimer : Int;
 
-  public function new(sprite, viewDist)
+  public function new(sprite, viewDist, maxHp)
   {
     alive = true;
     this.sprite = sprite;
     this.viewDist = viewDist;
     level = 1;
     xp = 0;
+    hp = this.maxHp = maxHp;
+    healTimer = 0;
   }
 
+  /// Updates the Ent for this tick
+  /// Only called once per tick
+  /// Defaults to calling updateHeal()
   public function update(w : World)
   {
-    throw "Ent function update() not implemented in class: " + Type.getClassName(Type.getClass(this));
+    updateHeal(w);
+  }
+  
+  /// Increments healTimer and calls gainHp() when appropriate
+  /// Starts healing 5 ticks after the most recent battle, then every other
+  /// tick after that
+  /// This should be called once every tick by update()
+  public function updateHeal(w : World)
+  {
+    ++healTimer;
+    if (healTimer >= 5) {
+      healTimer = 3;
+      if (hp < maxHp) gainHp(1, w);
+    }
   }
 
   /// Battles the given foe, with this as the first participant and foe as the second (when displaying)
-  /// The winner is awarded XP equivalent to the level of the loser
+  /// Resets both Ents' healTimer
+  /// Logs the rolls
+  /// Calls winRound(), loseRound(), and winBattle() as appropriate
   /// Mustn't be called when either this or foe is already dead
   public function battle(foe : Ent, w : World)
   {
     if (!foe.alive || !alive) throw "Attempted battle with dead participants: " + this + " vs. " + foe;
+
+    healTimer = foe.healTimer = 0;
 
     var fr = foe.roll();
     var r = roll();
@@ -42,12 +67,35 @@ class Ent
     w.log(World.Log.Battle(showRoll(r) + "  " + foe.showRoll(fr)));
 
     if (fr < r) {
-      addXp(foe.level, w);
-      foe.die(w);
+      var death = foe.loseRound(this, w);
+      winRound(foe, w);
+      if (death) winBattle(foe, w);
     } else if (fr > r) {
-      foe.addXp(level, w);
-      die(w);
+      var death = loseRound(foe, w);
+      foe.winRound(this, w);
+      if (death) foe.winBattle(this, w);
     }
+  }
+  
+  /// Called when this Ent wins a round in a battle
+  /// Defaults to add the appropriate XP
+  public function winRound(foe : Ent, w : World)
+  {
+    addXp(foe.level, w);
+  }
+  
+  /// Called when this Ent loses a round in a battle
+  /// Returns true if the Ent has died
+  /// Defaults to remove 1 HP
+  public function loseRound(foe : Ent, w : World) : Bool
+  {
+    return loseHp(1, w);
+  }
+  
+  /// Called when this Ent kills its foe in battle
+  /// Defaults to doing nothing
+  public function winBattle(foe : Ent, w : World)
+  {
   }
 
   public function showRoll(r : Int) : String
@@ -96,6 +144,43 @@ class Ent
     
     if (newLevel != level) setLevel(newLevel, w);
   }
+
+  /// Returns the the progress towards the next level as a fraction
+  /// In other terms, it returns ('current xp' / 'xp for next level')
+  public function xpProgress() : Float
+  {
+    return xp / xpForLevel(level + 1);
+  }
+  
+  /// Increments by the given amount of HP
+  /// Caps the HP off at maxHp
+  /// Announces the gain on the log
+  public function gainHp(inc : Int, w : World)
+  {
+    hp += inc;
+    if (hp > maxHp) hp = maxHp;
+    
+    w.log(World.Log.Hp(getName() + " gains " + inc + " HP."));
+  }
+  
+  /// Decrements by the given amount of HP
+  /// If the lowered HP means death, then die() is called
+  /// and this returns true
+  /// dec should be positive
+  /// Announces the loss on the log
+  public function loseHp(dec : Int, w : World) : Bool
+  {
+    hp -= dec;
+    w.log(World.Log.Hp(getName() + " loses " + dec + " HP."));
+    
+    if (hp <= 0) {
+      hp = 0;
+      die(w);
+      return true;
+    }
+    
+    return false;
+  }
   
   /// Sets level to lev.  May be overridden to display achievements,
   /// change sprites, or whatever in order to reflect the new level
@@ -135,7 +220,7 @@ class Player extends Ent
 
   public function new()
   {
-    super(Images.i.player, View.ViewDist);
+    super(Images.i.player, View.ViewDist, 3);
     p = this;
     onWalrus = null;
   }
@@ -147,6 +232,8 @@ class Player extends Ent
 
   public override function update(w : World)
   {
+    super.update(w);
+    
     if (dir == null) throw "Player has no dir!";
 
     switch (dir) {
@@ -200,13 +287,18 @@ class Player extends Ent
     w.lose();
   }
   
+  /// Qualifies for the achievement then calls super
+  public override function winBattle(foe : Ent, w : World)
+  {
+    Achievement.aFirstKill.qualify();
+    super.winBattle(foe, w);
+  }
+  
   /// Logs the gain in XP then calls the super
-  /// Assumes that the only time this gets called is when Player defeats a foe
   public override function addXp(inc : Int, w : World)
   {
     w.log(World.Log.Xp("You gain " + inc + " XP."));
     super.addXp(inc, w);
-    Achievement.aFirstKill.qualify();
   }
   
   /// Runs the super function, then displays a level up banner
@@ -259,6 +351,8 @@ class Player extends Ent
     alive = true;
     xp = 0;
     level = 1;
+    hp = maxHp;
+    healTimer = 0;
   }
   
   function setOnWalrus(val : Walrus)
@@ -360,9 +454,9 @@ class Ai extends Ent
   var path : Array<World.Coord> = null;
   var pathIndex : Int;
   
-  function new(sprite, viewDist, traversible)
+  function new(sprite, viewDist, maxHp, traversible)
   {
-    super(sprite, viewDist);
+    super(sprite, viewDist, maxHp);
     this.traversible = traversible;
   }
   
@@ -425,7 +519,7 @@ class Walrus extends Ai, implements Nameable
 
   public function new(level)
   {
-    super(Images.i.walrus, 8, Ent.isAmphTraversible);
+    super(Images.i.walrus, 8, 3, Ent.isAmphTraversible);
     setLevel(level, null);
   }
   
@@ -453,6 +547,8 @@ class Walrus extends Ai, implements Nameable
   /// Battles one adjacent Zombie, otherwise calls super
   public override function update(w : World)
   {
+    updateHeal(w);
+  
     for (c in coord.getNeighbors()) {
       if (w.inBounds(c)) {
         var e = w.entAt(c);
@@ -471,7 +567,7 @@ class Zombie extends Ai
 {
   public function new(level)
   {
-    super(Images.i.zombie, 6, Ent.isWalkTraversible);
+    super(Images.i.zombie, 6, 2, Ent.isWalkTraversible);
     setLevel(level, null);
   }
   
@@ -494,6 +590,8 @@ class Zombie extends Ai
   /// Attacks the player when adjacent, otherwise calls super
   public override function update(w : World)
   {
+    updateHeal(w);
+  
     var player = Player.p;
 
     for (c in coord.getNeighbors()) {
@@ -511,12 +609,13 @@ class Panda extends Ent
 {
   public function new()
   {
-    super(Images.i.panda, 3);
+    super(Images.i.panda, 3, 3);
     Ent.panda = this;
   }
 
   public override function update(w : World)
   {
+    super.update(w);
     if (Std.random(10) == 0) {
       var opts = new Array<World.Coord>();
       for (c in coord.getNeighbors()) {
