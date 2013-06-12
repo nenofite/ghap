@@ -374,7 +374,7 @@ class Factory
     var distLevel : Coord -> Rand -> Int = function(c, r) return Math.floor(c.distanceTo(Ent.Player.p.coord) / 50 + r.next() * 2) + 1;
     
     f.addEnt(100, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(c, r) return new Ent.Walrus(distLevel(c, r)));
-    f.addEnt(150, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(c, r) return new Ent.Zombie(distLevel(c, r) + 1));
+    f.addEnt(150, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(c, r) return new Ent.Zombie(distLevel(c, r)));
       
     f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= PANDA_DIST, function(c, r) return new Ent.Panda());
 

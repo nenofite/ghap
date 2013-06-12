@@ -22,6 +22,7 @@ class View
   var selectionDiv : Dynamic;
   var sel_name : Dynamic;
   var sel_level : Dynamic;
+  var sel_hp : Dynamic;
   var edit_name_btn : Dynamic;
   var edit_name_in : Dynamic;
   public var ul_achv : Dynamic;
@@ -88,6 +89,7 @@ class View
     selectionDiv = js.Lib.document.getElementById("selection");
     sel_name = js.Lib.document.getElementById("sel_name");
     sel_level = js.Lib.document.getElementById("sel_level");
+    sel_hp = js.Lib.document.getElementById("sel_hp");
     edit_name_btn = js.Lib.document.getElementById("edit_name_btn");
     edit_name_in = js.Lib.document.getElementById("edit_name_in");
     ul_achv = js.Lib.document.getElementById("ul_achv");
@@ -471,6 +473,13 @@ class View
     }
     
     sel_level.innerHTML = "Level " + selection.level;
+    
+    sel_hp.innerHTML = "";
+    for (i in 0...selection.maxHp) {
+      var img = js.Lib.document.createElement("img");
+      (cast img).src = if (i < selection.hp) Images.i.hp.src else Images.i.emptyHp.src;
+      sel_hp.appendChild(img);
+    }
     
     var screenX = Math.round((c.x + 0.5) * Terrain.spriteW) - viewX;
     var screenY = c.y * Terrain.spriteH - viewY - 25;

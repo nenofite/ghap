@@ -20,6 +20,9 @@ class Images
     named: "named.png",
     editName: "edit name.png", // have it preloaded even though we won't use the JS Image
     
+    hp: "hp.png",
+    emptyHp: "empty hp.png",
+    
     heart: "heart.png",
     emptyHeart: "empty heart.png",
 
