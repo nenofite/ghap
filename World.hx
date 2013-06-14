@@ -44,7 +44,7 @@ class World
           var c = { x: Math.floor(rand.next() * grid[0].length),
                     y: Math.floor(rand.next() * grid.length) };
 
-          if (inBounds(c) && em.matches(c, this)) {
+          if (inBounds(c) && entAt(c) == null && em.matches(c, this)) {
             addEnt(c, em.make(c, rand));
             break;
           }
