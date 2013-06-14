@@ -51,13 +51,16 @@ class Ent
   }
 
   /// Battles the given foe, with this as the first participant and foe as the second (when displaying)
+  /// If this wins the roll, then this.winRound() and foe.takeHit() are called.
+  /// If the foe dies as a result of this battle, then this.winBattle() is called.
+  /// If this ties or loses the roll, then this.loseRound() is called.
   /// Resets both Ents' healTimer
   /// Logs the rolls
-  /// Calls winRound(), loseRound(), and winBattle() as appropriate
+  /// Calls winRound(), takeHit(), and winBattle() as appropriate
   /// Mustn't be called when either this or foe is already dead
   public function battle(foe : Ent, w : World)
   {
-    if (!foe.alive || !alive) throw "Attempted battle with dead participants: " + this + " vs. " + foe;
+    if (!foe.alive || !alive) throw "Attempted battle with dead participants: " + getName() + " vs. " + foe.getName();
 
     healTimer = foe.healTimer = 0;
 
@@ -67,13 +70,11 @@ class Ent
     w.log(World.Log.Battle(showRoll(r) + "  " + foe.showRoll(fr)));
 
     if (fr < r) {
-      var death = foe.loseRound(this, w);
+      var death = foe.takeHit(this, w);
       winRound(foe, w);
       if (death) winBattle(foe, w);
-    } else if (fr > r) {
-      var death = loseRound(foe, w);
-      foe.winRound(this, w);
-      if (death) foe.winBattle(this, w);
+    } else {
+      loseRound(foe, w);
     }
   }
   
@@ -84,10 +85,17 @@ class Ent
     addXp(foe.level, w);
   }
   
-  /// Called when this Ent loses a round in a battle
+  /// Called when this Ent battles another Ent but does
+  /// not succeed in landing a hit
+  /// Defaults to doing nothing
+  public function loseRound(foe : Ent, w : World)
+  {
+  }
+  
+  /// Called when this Ent takes a hit in a battle
   /// Returns true if the Ent has died
   /// Defaults to remove 1 HP
-  public function loseRound(foe : Ent, w : World) : Bool
+  public function takeHit(foe : Ent, w : World) : Bool
   {
     return loseHp(1, w);
   }
@@ -587,7 +595,7 @@ class Zombie extends Ai
     return if (dist <= viewDist) playerCoord else null;
   }
 
-  /// Attacks the player when adjacent, otherwise calls super
+  /// Attacks the player or a walrus when adjacent, otherwise calls super
   public override function update(w : World)
   {
     updateHeal(w);
@@ -595,9 +603,12 @@ class Zombie extends Ai
     var player = Player.p;
 
     for (c in coord.getNeighbors()) {
-      if (w.inBounds(c) && w.entAt(c) == player) {
-        battle(player, w);
-        return;
+      if (w.inBounds(c)) {
+        var e = w.entAt(c);
+        if (e != null && e.alive && (e == player || Type.getClass(e) == Walrus)) {
+          battle(e, w);
+          return;
+        }
       }
     }
     
