@@ -226,7 +226,6 @@ class View
     b.innerHTML = "";
     dia_win.hide();
     dia_lose.hide();
-    Ent.Player.p.reset();
     genWorld(Std.random(9999));
   }
 
@@ -242,6 +241,7 @@ class View
 
   function genWorld(seed)
   {
+    Ent.Player.p.reset();
     Ent.Player.p.coord = null;
 
     world = factory.generate(seed);
