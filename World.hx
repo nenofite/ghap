@@ -358,7 +358,7 @@ class Factory
     f.addTerrain(Terrain.forest);
     f.addTerrain(Terrain.grass);
     f.addTerrain(Terrain.rock, 0.2);
-    f.addTerrain(Terrain.water, 4);
+    f.addTerrain(Terrain.water, 0.2);
 
     f.addEnt(1, 
       function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), 
@@ -373,7 +373,7 @@ class Factory
       
     var distLevel : Coord -> Rand -> Int = function(c, r) return Math.floor(c.distanceTo(Ent.Player.p.coord) / 50 + r.next() * 2) + 1;
     
-    f.addEnt(100, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(c, r) return new Ent.Walrus(distLevel(c, r)));
+    f.addEnt(50, function(c, w) return Ent.isAmphTraversible(w.tileAt(c).type), function(c, r) return new Ent.Walrus(distLevel(c, r)));
     f.addEnt(150, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type), function(c, r) return new Ent.Zombie(distLevel(c, r)));
       
     f.addEnt(1, function(c, w) return Ent.isWalkTraversible(w.tileAt(c).type) && c.distanceTo(Ent.Player.p.coord) >= PANDA_DIST, function(c, r) return new Ent.Panda());
