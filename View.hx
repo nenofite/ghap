@@ -32,8 +32,8 @@ class View
   var lev_bar : Dynamic;
   var health : Dynamic;
 
-  var viewX : Int = 0;
-  var viewY : Int = 0;
+  public var viewX : Int = 0;
+  public var viewY : Int = 0;
 
   var viewW : Int = -1;
   var viewH : Int = -1;
@@ -301,6 +301,15 @@ class View
     viewY = Math.round(c.y * Terrain.spriteH - viewH / 2);
     world.makeDirty();
   }
+  
+  /// Constructs and displays a bubble horizontally and vertically centered on Ent
+  /// Adds the bubble to the registry
+  /// Animates the bubble to float up and fade away
+  /// Schedules the deletion of the bubble once faded
+  public function emitBubble(img : Dynamic, ent : Ent)
+  {
+    new Bubble(img, ent);
+  }
 
   public function draw()
   {
@@ -415,7 +424,6 @@ class View
                     dotX += 10;
                   }
                 }
-                }
               }
             }
           }
@@ -431,6 +439,7 @@ class View
     draw();
     updateCompass();
     updateStats();
+    Bubble.updateAll();
     world.makeClean();
   }
 
@@ -638,6 +647,64 @@ class View
         }, 1000);
       }, 1000);
     }, 5000);
+  }
+}
+
+class Bubble
+{
+  static var registry : Array<Bubble> = new Array();
+
+  var img : Dynamic;
+  var ent : Ent;
+  
+  var wrap : Dynamic;
+  var inner : Dynamic;
+  
+  public function new(img, ent)
+  {
+    this.img = img;
+    this.ent = ent;
+    
+    wrap = js.Lib.document.createElement("div");
+    inner = js.Lib.document.createElement("img");
+    inner.src = img.src;
+    wrap.appendChild(inner);
+    
+    wrap.className = "bubble";
+    update();
+    
+    js.Lib.document.body.appendChild(wrap);
+    
+    registry.push(this);
+    
+    (cast js.Lib.window).setTimeout(function() {
+      wrap.className = "bubble bubbleUp";
+      
+      (cast js.Lib.window).setTimeout(remove, 1000);
+    }, 200);
+  }
+  
+  /// Removes this from registry and removes wrap from the document
+  function remove()
+  {
+    registry.remove(this);
+    js.Lib.document.body.removeChild(wrap);
+  }
+  
+  /// Moves this bubble so it is over x and y in the view
+  function update()
+  {
+    var vx = ent.coord.x * Terrain.spriteW - View.v.viewX + Math.floor(Terrain.spriteW / 2 - img.width / 2);
+    var vy = ent.coord.y * Terrain.spriteH - View.v.viewY - img.height - 20;
+    
+    wrap.style.left = vx;
+    wrap.style.top = vy;
+  }
+  
+  /// Goes through registry and updates each bubble
+  public static function updateAll()
+  {
+    for (b in registry) b.update();
   }
 }
 

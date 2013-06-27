@@ -451,3 +451,19 @@ input:hover, input:focus {
     height: 25px;
     text-align: center;
 }
+
+.bubble {
+    position: absolute;
+}
+.bubble > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    transition: top 1s linear, opacity 1s;
+}
+
+.bubble.bubbleUp > img {
+    opacity: 0;
+    top: -25px;
+}

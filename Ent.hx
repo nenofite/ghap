@@ -163,12 +163,14 @@ class Ent
   /// Increments by the given amount of HP
   /// Caps the HP off at maxHp
   /// Announces the gain on the log
+  /// Emits a bubble
   public function gainHp(inc : Int, w : World)
   {
     hp += inc;
     if (hp > maxHp) hp = maxHp;
     
     w.log(World.Log.Hp(getName() + " gains " + inc + " HP."));
+    emitBubble(Images.i.bHpUp);
   }
   
   /// Decrements by the given amount of HP
@@ -176,10 +178,12 @@ class Ent
   /// and this returns true
   /// dec should be positive
   /// Announces the loss on the log
+  /// Emits a bubble
   public function loseHp(dec : Int, w : World) : Bool
   {
     hp -= dec;
     w.log(World.Log.Hp(getName() + " loses " + dec + " HP."));
+    emitBubble(Images.i.bHpDown);
     
     if (hp <= 0) {
       hp = 0;
@@ -198,6 +202,13 @@ class Ent
   {
     level = lev;
     if (w != null) w.log(World.Log.Xp(getName() + " is now level " + lev + "."));
+  }
+  
+  /// Emits a bubble at this Ent
+  /// Passes on the image and coordinates to View.emitBubble()
+  public function emitBubble(img : Dynamic)
+  {
+    View.v.emitBubble(img, this);
   }
 
   public static function isWalkTraversible(t : Terrain) : Bool

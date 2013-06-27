@@ -36,6 +36,9 @@ class Images
     aFirstKill: "achv/first kill.png",
     aRageQuit: "achv/rage quit.png",
     aPopular: "achv/popular.png",
+    
+    bHpUp: "bubb/hp up.png",
+    bHpDown: "bubb/hp down.png",
   };
 
   static var loading : Int;
