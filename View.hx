@@ -406,6 +406,15 @@ class View
                 if (!ent.alive) {
                   context.globalAlpha = 1;
                   context.drawImage(skull, lx - skullW, ly - skullH);
+                } else if (ent.hp != ent.maxHp) {
+                  var dotX = x * Terrain.spriteW - offX;
+                  var dotY = (y + 1) * Terrain.spriteH - offY - 14;
+                  for (i in 0...ent.maxHp) {
+                    var img = if (i < ent.hp) Images.i.hpDot else Images.i.emptyHpDot;
+                    context.drawImage(img, dotX, dotY);
+                    dotX += 10;
+                  }
+                }
                 }
               }
             }

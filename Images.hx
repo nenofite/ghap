@@ -25,6 +25,9 @@ class Images
     
     heart: "heart.png",
     emptyHeart: "empty heart.png",
+    
+    hpDot: "hp dot.png",
+    emptyHpDot: "empty hp dot.png",
 
     background: "world bg.png",
     
