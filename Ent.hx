@@ -573,9 +573,12 @@ class Walrus extends Ai, implements Nameable
 
 class Zombie extends Ai
 {
+  var target : Ent = null;
+  var targetCoord : World.Coord;
+
   public function new(level)
   {
-    super(Images.i.zombie, 6, 2, Ent.isWalkTraversible);
+    super(Images.i.zombie, 6, Std.random(2) + 2, Ent.isWalkTraversible);
     setLevel(level, null);
   }
   
@@ -587,32 +590,65 @@ class Zombie extends Ai
     sprite = if (lev >= 3) Images.i.zombieTophat else Images.i.zombie;
   }
   
-  /// Goes toward the player when they are within view
+  /// Goes toward 'targetCoord' or null when target is null
   override function destination(w : World) : World.Coord
   {
-    var playerCoord = Player.p.coord;
-    var dist = coord.distanceTo(playerCoord);
-    return if (dist <= viewDist) playerCoord else null;
+    return if (target == null) null else targetCoord;
   }
 
   /// Attacks the player or a walrus when adjacent, otherwise calls super
   public override function update(w : World)
   {
     updateHeal(w);
+    updateTarget(w);
+    
+    if (target != null && coord.distanceTo(target.coord) < 2) {
+      battle(target, w);
+    } else {
+      super.update(w);
+    }
+  }
   
-    var player = Player.p;
-
-    for (c in coord.getNeighbors()) {
-      if (w.inBounds(c)) {
-        var e = w.entAt(c);
-        if (e != null && e.alive && (e == player || Type.getClass(e) == Walrus)) {
-          battle(e, w);
-          return;
+  /// Reassesses the current target:
+  /// If the current target is null, dead, or off the world, then
+  /// attempts to find a new target by picking the closest Walrus or Player
+  /// If no suitable target is found, target is set to null
+  /// If after reassessing, there is a target:
+  /// If target is within view, update targetCoord
+  function updateTarget(w : World)
+  {
+    if (target != null && (!target.alive || target.coord == null))
+      target = null;
+    
+    if (target == null) {
+      var closestDist = 0.0;
+      var closest : Ent = null;
+    
+      for (c in getVisible()) {
+        if (w.inBounds(c)) {
+          var e = w.entAt(c);
+          if (e != null && e.alive) {
+            var clas = Type.getClass(e);
+            if (clas == Walrus || clas == Player) {
+              var dist = coord.distanceTo(e.coord);
+              if (closest == null || dist < closestDist || 
+                (Math.abs(dist - closestDist) <= 2 && Std.random(5) == 0)) {
+                  closestDist = dist;
+                  closest = e;
+              }
+            }
+          }
         }
       }
+      
+      target = closest;
     }
     
-    super.update(w);
+    if (target != null) {
+      if (coord.distanceTo(target.coord) <= viewDist) {
+        targetCoord = target.coord;
+      }
+    }
   }
 }
 
