@@ -694,11 +694,15 @@ class Bubble
   /// Moves this bubble so it is over x and y in the view
   function update()
   {
-    var vx = ent.coord.x * Terrain.spriteW - View.v.viewX + Math.floor(Terrain.spriteW / 2 - img.width / 2);
-    var vy = ent.coord.y * Terrain.spriteH - View.v.viewY - img.height - 20;
-    
-    wrap.style.left = vx;
-    wrap.style.top = vy;
+    if (ent.coord == null) {
+      remove();
+    } else {
+      var vx = ent.coord.x * Terrain.spriteW - View.v.viewX + Math.floor(Terrain.spriteW / 2 - img.width / 2);
+      var vy = ent.coord.y * Terrain.spriteH - View.v.viewY - img.height - 20;
+      
+      wrap.style.left = vx;
+      wrap.style.top = vy;
+    }
   }
   
   /// Goes through registry and updates each bubble
