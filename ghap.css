@@ -467,3 +467,114 @@ input:hover, input:focus {
     opacity: 0;
     top: -25px;
 }
+
+#howto_wrap {
+    background: red;
+    
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: -331px;
+    width: 662px;
+}
+
+#howto_prev {
+    opacity: 0;
+
+    position: absolute;
+    left: 0;
+    bottom: 15px;
+    height: 100px;
+    width: 30px;
+    border: 1px solid black;
+    
+    border-radius: 15px 0 0 15px;
+    background: url("howto/btn_prev.png"), rgba(0, 0, 0, 0.5);
+    color: white;
+    
+    transition: opacity 0.5s;
+}
+
+#howto_next {
+    opacity: 0;
+
+    position: absolute;
+    right: 0;
+    bottom: 15px;
+    height: 100px;
+    width: 30px;
+    border: 1px solid black;
+    
+    border-radius: 0 15px 15px 0;
+    background: url("howto/btn_next.png"), rgba(0, 0, 0, 0.5);
+    color: white;
+    
+    transition: opacity 0.5s;
+}
+
+#howto_close {
+    position: absolute;
+    width: 30px;
+    height: 50px;
+    top: 20px;
+    right: -31px;
+    border: 1px solid black;
+    
+    border-radius: 0 15px 15px 0;
+    background: url("howto/btn_close.png"), rgba(0, 0, 0, 0.5);
+}
+
+#howto_prev:hover, #howto_next:hover, #howto_close:hover {
+    border-color: white;
+}
+
+#howto {
+    opacity: 0;
+
+    position: absolute;
+    bottom: 0;
+    left: 30px;
+    width: 602px;
+    min-height: 206px;
+    padding: 5px 15px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 1px solid black;
+    
+    border-radius: 15px 15px 0 0;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    
+    transition: opacity 0.5s;
+}
+
+#howto > section {
+    transition: opacity 0.5s;
+}
+
+#howto > section h1 {
+    font-size: 14pt;
+}
+
+#howto h1, #howto p {
+    margin: 0.5em 0;
+}
+
+#howto img {
+    float: left;
+    margin: 0 15px 0 0;
+}
+
+#howto_label {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    
+    text-transform: uppercase;
+    font: 300 14px "Roboto", sans-serif;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.howto {
+    display: none;
+}

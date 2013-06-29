@@ -62,6 +62,47 @@
   <img src="move arrow.png" id="arr_dr" alt="DR">
 </div>
 
+<!--  How-to-Play  -->
+<div id="howto_wrap">
+  <button id="howto_prev"></button>
+  <button id="howto_next"></button>
+  <div id="howto">
+    <h1 id="howto_title"></h1>
+    <span id="howto_label">How-To-Play</span>
+    <button id="howto_close"></button>
+  </div>
+</div>
+
+<div class="howto" id="howto_basics">
+  <h1>The Basics</h1>
+  <section>
+    <h1>Movement</h1>
+    <img src="howto/move.png" alt="Player Moving"/>
+    <p>There are three ways to move around: the numpad (make sure NumLock 
+    is on), using the K key and its eight neighbors, and using the on-screen 
+    buttons (intended for touchscreen devices).</p>
+    <p>If you are pressing the keys but nothing is happening, try clicking
+    on the world.  This will return keyboard focus to the game.</p>
+    <p>Time only progresses when you move.  Press the central button (5, K, 
+    or the hourglass) to wait a turn instead of moving.</p>
+  </section>
+  <section>
+    <h1>Mounting Walri</h1>
+    <img src="howto/mount.png" alt="Player Mounting a Walrus"/>
+    <p>In order to cross water as well as increase your combat rolls, you
+    can ride walri.</p>
+    <p>In order to mount a walrus, walk into it.  To dismount, press D or
+    the on-screen dismount button (directly above the movement buttons).</p>
+    <p>While riding a walrus, you can switch places with adjacent walri by
+    moving into them.  This allows you to get through big crowds.</p>
+  </section>
+  <section>
+    <h1>Winning</h1>
+    <img src="howto/win.png" alt="Panda"/>
+    <p>The goal is simple: get to the panda.  When you find it, walk into it.</p>
+  </section>
+</div>
+
 <!--  Dialogs  -->
 <div class="dia" id="dia_win">
   <h1>Victory!</h1>
@@ -98,7 +139,9 @@
 </div>
 <div class="dia" id="dia_instructions">
   <h1>How to Play</h1>
-  <div class="center"><img alt="Instructions" title="Need I say more?" src="instructions.png"></div>
+  Select a topic below to read about it.
+  <ul id="inst_topics">
+  </ul>
   <div class="center"><a data-bind="close">Close</a></div>
 </div>
 <div class="dia" id="dia_about">

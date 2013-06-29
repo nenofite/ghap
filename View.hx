@@ -27,6 +27,12 @@ class View
   var edit_name_in : Dynamic;
   public var ul_achv : Dynamic;
   
+  var el_howto : Dynamic;
+  var el_howto_title : Dynamic;
+  var el_howto_prev : Dynamic;
+  var el_howto_next : Dynamic;
+  var el_howto_close : Dynamic;
+  
   var curr_lev : Dynamic;
   var next_lev : Dynamic;
   var lev_bar : Dynamic;
@@ -70,6 +76,11 @@ class View
   public var arr_ul : Dynamic;
   public var arr_w : Dynamic;
   
+  // how-to:
+  var howto : HowTo;
+  var howtoIndex : Int;
+  var howtoSection : Dynamic;
+  
   public var btn_dismount : Dynamic;
 
   var resized : Bool = false;
@@ -94,6 +105,15 @@ class View
     edit_name_in = js.Lib.document.getElementById("edit_name_in");
     ul_achv = js.Lib.document.getElementById("ul_achv");
     
+    el_howto = js.Lib.document.getElementById("howto");
+    el_howto_title = js.Lib.document.getElementById("howto_title");
+    el_howto_prev = js.Lib.document.getElementById("howto_prev");
+    el_howto_prev.onclick = howToPrev;
+    el_howto_next = js.Lib.document.getElementById("howto_next");
+    el_howto_next.onclick = howToNext;
+    el_howto_close = js.Lib.document.getElementById("howto_close");
+    el_howto_close.onclick = howToClose;
+  
     curr_lev = js.Lib.document.getElementById("curr");
     next_lev = js.Lib.document.getElementById("next");
     lev_bar = js.Lib.document.getElementById("bar");
@@ -140,6 +160,25 @@ class View
     dia_lose.bind({ restart: restartGame });
     dia_instructions = new Dia("dia_instructions");
     dia_instructions.bind({ close: dia_instructions.hide });
+    
+    var inst_topics = js.Lib.document.getElementById("inst_topics");
+    new JQuery(js.Lib.document.body).children(".howto").each(function(i, el) {
+      var ht = new HowTo(el);
+    
+      var li = js.Lib.document.createElement("li");
+      var a = js.Lib.document.createElement("a");
+      a.onclick = cast function() {
+        howto = ht;
+        howtoIndex = 0;
+        dia_instructions.hide();
+        updateHowTo();
+      };
+      a.innerHTML = ht.title;
+      
+      li.appendChild(a);
+      inst_topics.appendChild(li);
+    });
+    
     dia_loading = new Dia("dia_loading", true);
     dia_seed = new Dia("dia_seed");
     dia_seed.bind({ close: dia_seed.hide, change: function() { dia_seed.hide(); dia_change_seed.show(); } });
@@ -181,7 +220,7 @@ class View
     js.Lib.document.getElementById("btn_seed").onclick = cast dia_seed.show;
     js.Lib.document.getElementById("btn_achv").onclick = cast dia_achievements.show;
     js.Lib.document.getElementById("btn_about").onclick = cast dia_about.show;
-
+    
     Terrain.init();
     Ent.Player.init();
 
@@ -648,6 +687,89 @@ class View
       }, 1000);
     }, 5000);
   }
+  
+  /// Updates the how-to-play display for the current values of howto and
+  /// howtoIndex
+  /// Updates howtoSection appropriately
+  /// If howto is null, the how-to-play box (if showing) will fade out, otherwise:
+  /// If another section is currently displayed, it will fade out
+  /// The new section will fade in
+  /// The title will be updated
+  /// The prev and next buttons will be updated
+  function updateHowTo()
+  {
+    if (howto == null) {
+      el_howto.style.opacity = el_howto_prev.style.opacity = el_howto_next.style.opacity = 0;
+      
+      var hsect = howtoSection;
+      howtoSection = null;
+      
+      (cast js.Lib.window).setTimeout(function() {
+        if (howtoSection == null) { // if nothing else has happened since setTimeout
+          el_howto_title.innerHTML = "";
+          if (hsect != null) {
+            el_howto.removeChild(hsect);
+          }
+        }
+      }, 500);
+    } else {
+      el_howto_title.innerHTML = howto.title;
+      el_howto.style.opacity = 1;
+      
+      el_howto_prev.style.opacity = if (howtoIndex > 0) 1 else 0;
+      el_howto_next.style.opacity = if (howtoIndex < howto.sections.length - 1) 1 else 0;
+      
+      var sect = howto.sections[howtoIndex];
+      var show = function() {
+        sect.style.opacity = 0;
+        el_howto.appendChild(sect);
+        (cast js.Lib.window).setTimeout(function() {
+          sect.style.opacity = 1;
+        }, 100);
+      };
+      
+      if (howtoSection != null) {
+        var hsect = howtoSection;
+        hsect.style.opacity = 0;
+        (cast js.Lib.window).setTimeout(function() {
+          el_howto.removeChild(hsect);
+          show();
+        }, 500);
+      } else {
+        show();
+      }
+      howtoSection = sect;
+    }
+  }
+  
+  /// Advances to the next section of the current how-to
+  /// Does not do anything when howtoIndex is already at the end of the array
+  /// Calls updateHowTo() when howtoIndex is changed
+  function howToNext()
+  {
+    if (howtoIndex < howto.sections.length - 1) {
+      ++howtoIndex;
+      updateHowTo();
+    }
+  }
+  
+  /// Returns to the previous section of the current how-to
+  /// Does not do anything when howtoIndex is already at 0
+  /// Calls updateHowTo() when howtoIndex is changed
+  function howToPrev()
+  {
+    if (howtoIndex > 0) {
+      --howtoIndex;
+      updateHowTo();
+    }
+  }
+  
+  /// Sets howto to null then calls updateHowTo()
+  function howToClose()
+  {
+    howto = null;
+    updateHowTo();
+  }
 }
 
 class Bubble
@@ -709,6 +831,21 @@ class Bubble
   public static function updateAll()
   {
     for (b in registry) b.update();
+  }
+}
+
+class HowTo
+{
+  public var title : String;
+  public var sections : Array<Dynamic>;
+  
+  public function new(howto : Dynamic)
+  {
+    var jq = new JQuery(howto);
+    title = jq.children("h1").html();
+    
+    sections = new Array();
+    jq.children("section").each(function(i, s) sections.push(s));
   }
 }
 
