@@ -469,6 +469,8 @@ input:hover, input:focus {
 }
 
 #howto_wrap {
+    display: none;
+
     background: red;
     
     position: absolute;
