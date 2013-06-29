@@ -816,7 +816,7 @@ class Bubble
   /// Moves this bubble so it is over x and y in the view
   function update()
   {
-    if (ent.coord == null) {
+    if (ent.coord == null || ent.coord.distanceTo(Ent.Player.p.coord) > View.ViewDist) {
       remove();
     } else {
       var vx = ent.coord.x * Terrain.spriteW - View.v.viewX + Math.floor(Terrain.spriteW / 2 - img.width / 2);
