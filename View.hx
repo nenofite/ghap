@@ -410,6 +410,25 @@ class View
         }
       }
     }
+    
+    // Draw selection circle
+    if (selection != null) {
+      var centerX = selection.coord.x * Terrain.spriteW - viewX + Math.floor(Terrain.spriteW / 2);
+      var centerY = selection.coord.y * Terrain.spriteH - viewY + Math.floor(Terrain.spriteH / 2);
+      var radius = selection.viewDist * Terrain.spriteW;
+      
+      context.strokeStyle = "rgba(255, 0, 0, 0.5)";
+      
+      context.lineWidth = 3;
+      context.beginPath();
+      context.arc(centerX, centerY, radius, 0, 2 * Math.PI, true);
+      context.stroke();
+      
+      context.lineWidth = 1;
+      context.beginPath();
+      context.arc(centerX, centerY, radius - 5, 0, 2 * Math.PI, true);
+      context.stroke();
+    }
 
     // Draw sprites and fog
     for (y in 0...vHeight) {
