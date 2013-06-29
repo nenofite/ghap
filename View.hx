@@ -27,6 +27,7 @@ class View
   var edit_name_in : Dynamic;
   public var ul_achv : Dynamic;
   
+  var el_howto_wrap : Dynamic;
   var el_howto : Dynamic;
   var el_howto_title : Dynamic;
   var el_howto_prev : Dynamic;
@@ -105,6 +106,7 @@ class View
     edit_name_in = js.Lib.document.getElementById("edit_name_in");
     ul_achv = js.Lib.document.getElementById("ul_achv");
     
+    el_howto_wrap = js.Lib.document.getElementById("howto_wrap");
     el_howto = js.Lib.document.getElementById("howto");
     el_howto_title = js.Lib.document.getElementById("howto_title");
     el_howto_prev = js.Lib.document.getElementById("howto_prev");
@@ -710,34 +712,39 @@ class View
           if (hsect != null) {
             el_howto.removeChild(hsect);
           }
+          el_howto_wrap.style.display = "none";
         }
       }, 500);
     } else {
       el_howto_title.innerHTML = howto.title;
-      el_howto.style.opacity = 1;
-      
-      el_howto_prev.style.opacity = if (howtoIndex > 0) 1 else 0;
-      el_howto_next.style.opacity = if (howtoIndex < howto.sections.length - 1) 1 else 0;
+      el_howto_wrap.style.display = "block";
       
       var sect = howto.sections[howtoIndex];
-      var show = function() {
-        sect.style.opacity = 0;
-        el_howto.appendChild(sect);
-        (cast js.Lib.window).setTimeout(function() {
-          sect.style.opacity = 1;
-        }, 100);
-      };
-      
-      if (howtoSection != null) {
-        var hsect = howtoSection;
-        hsect.style.opacity = 0;
-        (cast js.Lib.window).setTimeout(function() {
-          el_howto.removeChild(hsect);
+      var hsect = howtoSection;
+      (cast js.Lib.window).setTimeout(function() {
+        el_howto.style.opacity = 1;
+        
+        el_howto_prev.style.opacity = if (howtoIndex > 0) 1 else 0;
+        el_howto_next.style.opacity = if (howtoIndex < howto.sections.length - 1) 1 else 0;
+        
+        var show = function() {
+          sect.style.opacity = 0;
+          el_howto.appendChild(sect);
+          (cast js.Lib.window).setTimeout(function() {
+            sect.style.opacity = 1;
+          }, 100);
+        };
+        
+        if (hsect != null) {
+          hsect.style.opacity = 0;
+          (cast js.Lib.window).setTimeout(function() {
+            el_howto.removeChild(hsect);
+            show();
+          }, 500);
+        } else {
           show();
-        }, 500);
-      } else {
-        show();
-      }
+        }
+      }, 100);
       howtoSection = sect;
     }
   }
