@@ -541,14 +541,8 @@ class View
       return;
     }
     
-    if (Std.is(selection, Ent.Nameable)) {
-      var name = (cast selection).name;
-      sel_name.innerHTML = if (name != null) '"' + name + '"' else selection.getName();
-      edit_name_btn.style.display = "inline";
-    } else {
-      sel_name.innerHTML = selection.getName();
-      edit_name_btn.style.display = "none";
-    }
+    sel_name.innerHTML = selection.getName();
+    edit_name_btn.style.display = if (Std.is(selection, Ent.Nameable)) "inline" else "none";
     
     sel_level.innerHTML = "Level " + selection.level;
     

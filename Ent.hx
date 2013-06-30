@@ -130,11 +130,10 @@ class Ent
   
   /// A human-readable name for this ent, which will be seen
   /// by the player during gameplay.
-  /// This should *not* incorporate this Ent's nickname, just its species name
-  /// Defaults to class name
+  /// Defaults to nickname if Nameable, otherwise class name
   public function getName() : String
   {
-    return Type.getClassName(Type.getClass(this));
+    return if (Std.is(this, Nameable) && (cast this).name != null) (cast this).name else Type.getClassName(Type.getClass(this));
   }
   
   /// increments xp, then levels up to the resulting level
