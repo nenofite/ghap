@@ -580,3 +580,46 @@ input:hover, input:focus {
 .howto {
     display: none;
 }
+
+#ad {
+  width: 120px;
+  height: 240px;
+  
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: 1px solid black;
+  
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/*
+#ad_dia {
+    width: 120px;
+    height: 240px;
+    
+    background: rgba(0, 0, 0, 0.5);
+
+    display: none;
+    
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: -90px 0 0 345px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+#ad_dia.a {
+    display: block;
+}
+
+#ad_dia.b {
+    opacity: 1;
+}
+*/
+
