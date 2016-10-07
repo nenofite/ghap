@@ -4,7 +4,17 @@
 
 Not much can be said about this little "game." Just find the panda.
 
-It runs entirely using HTML5 and Javascript. It was built with Haxe.
+The game runs entirely using HTML5 and Javascript, built with 
+[Haxe](http://haxe.org/). All graphics are original and all code is original, 
+except the use of jQuery and the Haxe standard library.
 
-All graphics are original. All code is original, except the use of jQuery and 
-the Haxe standard library.
+## Instructions
+
+To build the game, run:
+
+```sh
+haxe ghap.hxml
+./release.sh
+```
+
+Then open the file `dist/ghap.html` in your browser and enjoy!
