@@ -23,7 +23,7 @@ class Dia
   {
     var h = el.height();
     
-    var maxHeight = js.Browser.window.innerHeight - 50;
+    var maxHeight = Math.round(js.Browser.window.innerHeight) - 50;
     (cast el.css)("max-height", maxHeight + "px");
     if (h > maxHeight) {
       h = maxHeight;
