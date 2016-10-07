@@ -23,7 +23,7 @@ class Dia
   {
     var h = el.height();
     
-    var maxHeight = js.Lib.window.innerHeight - 50;
+    var maxHeight = js.Browser.window.innerHeight - 50;
     (cast el.css)("max-height", maxHeight + "px");
     if (h > maxHeight) {
       h = maxHeight;
@@ -53,8 +53,9 @@ class Dia
   {
     if (!showing) {
       showing = true;
+      //~ Ad.show();
       el.addClass("a");
-      (cast js.Lib.window).setTimeout(function() {
+      (cast js.Browser.window).setTimeout(function() {
         if (showing) el.addClass("b");
       }, 100);
     }
@@ -64,17 +65,66 @@ class Dia
   {
     if (showing) {
       showing = false;
+      //~ hideAd();
       el.removeClass("b");
-      (cast js.Lib.window).setTimeout(function() {
+      (cast js.Browser.window).setTimeout(function() {
         if (!showing) el.removeClass("a");
       }, 500);
       
       View.v.canvas.focus();
     }
   }
+  
+  //~ static function hideAd()
+  //~ {
+    //~ var allHidden = true;
+    //~ for (dia in dias) {
+      //~ if (dia.showing) {
+        //~ allHidden = false;
+        //~ break;
+      //~ }
+    //~ }
+    //~ if (allHidden) Ad.hide();
+  //~ }
 
   public function toggle()
   {
     if (showing) hide() else show();
   }
 }
+
+//~ class Ad
+//~ {
+  //~ static var showing : Bool;
+  //~ static var el : JQuery;
+  //~ 
+  //~ public static function init()
+  //~ {
+    //~ el = new js.JQuery("#ad_dia");
+    //~ showing = false;
+  //~ }
+  //~ 
+  //~ public static function show()
+  //~ {
+    //~ if (!showing) {
+      //~ showing = true;
+      //~ el.addClass("a");
+      //~ (cast js.Browser.window).setTimeout(function() {
+        //~ if (showing) el.addClass("b");
+      //~ }, 100);
+    //~ }
+  //~ }
+  //~ 
+  //~ public static function hide()
+  //~ {
+    //~ if (showing) {
+      //~ showing = false;
+      //~ el.removeClass("b");
+      //~ (cast js.Browser.window).setTimeout(function() {
+        //~ if (!showing) el.removeClass("a");
+      //~ }, 500);
+      //~ 
+      //~ View.v.canvas.focus();
+    //~ }
+  //~ }
+//~ }

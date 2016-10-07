@@ -32,31 +32,31 @@ class Achievement
   {
     earned = true;
     
-    var li = js.Lib.document.createElement("li");
+    var li = js.Browser.document.createElement("li");
     li.innerHTML = name;
     li.title = desc;
     View.v.ul_achv.appendChild(li);
     View.v.dia_achievements.resize();
     
-    var div = js.Lib.document.createElement("div");
+    var div = js.Browser.document.createElement("div");
     div.className = "achv";
     
-    var image = js.Lib.document.createElement("img");
+    var image = js.Browser.document.createElement("img");
     image.className = "achv_img";
     (cast image).src = img;
     div.appendChild(image);
     
-    var type = js.Lib.document.createElement("div");
+    var type = js.Browser.document.createElement("div");
     type.className = "type";
     type.innerHTML = "Achievement";
     div.appendChild(type);
     
-    var a_title = js.Lib.document.createElement("div");
+    var a_title = js.Browser.document.createElement("div");
     a_title.className = "a_title";
     a_title.innerHTML = name;
     div.appendChild(a_title);
     
-    var a_desc = js.Lib.document.createElement("div");
+    var a_desc = js.Browser.document.createElement("div");
     a_desc.className = "a_desc";
     a_desc.innerHTML = desc;
     div.appendChild(a_desc);

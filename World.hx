@@ -8,7 +8,7 @@ class World
 
   // row-major
   var grid : Array<Array<Tile>>;
-  public var ents : Hash<Ent>;
+  public var ents : Map<String, Ent>;
 
   var rand : Rand;
   public var originalSeed(default, null) : Int;
@@ -33,7 +33,7 @@ class World
     this.mix = mix;
     this.totalProb = totalProb;
     grid = new Array();
-    ents = new Hash();
+    ents = new Map();
 
     generate(15, 15);
     for (i in 0...4) subdivide();
@@ -260,10 +260,10 @@ class World
     var open = new Heap<PTile>(function(a, b) return (b.g + b.f) - (a.g + a.f));
     var openpt : PTile = { coord: start, parent: null, f: heuristic(start, dest), g: 0 };
     open.add(openpt);
-    var onOpen = new Map<PTile>();
+    var onOpen = new Map<String, PTile>();
     onOpen.set(key(start), openpt);
 
-    var closed = new Map<PTile>();
+    var closed = new Map<String, PTile>();
 
     var path : PTile = null; // whichever touches the destination
     var best : PTile = openpt; // whichever gets closest to the destination (using heuristic)
@@ -423,7 +423,7 @@ class Tile
       case 0: a;
       case 1: b;
       case 2: c;
-      case 3: d;
+      case 3, _: d;
     }).type;
 
     return new Tile(type, elev);

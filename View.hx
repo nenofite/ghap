@@ -92,40 +92,40 @@ class View
   {
     v = this;
   
-    canvas = js.Lib.document.getElementById(canvasId);
-    //~ stats = js.Lib.document.getElementById("stats");
-    cmp_needle = js.Lib.document.getElementById("cmp_needle");
-    span_seed = js.Lib.document.getElementById("seed");
-    inp_seed = js.Lib.document.getElementById("inp_seed");
-    achievements = js.Lib.document.getElementById("achievements");
-    selectionDiv = js.Lib.document.getElementById("selection");
-    sel_name = js.Lib.document.getElementById("sel_name");
-    sel_level = js.Lib.document.getElementById("sel_level");
-    sel_hp = js.Lib.document.getElementById("sel_hp");
-    edit_name_btn = js.Lib.document.getElementById("edit_name_btn");
-    edit_name_in = js.Lib.document.getElementById("edit_name_in");
-    ul_achv = js.Lib.document.getElementById("ul_achv");
+    canvas = js.Browser.document.getElementById(canvasId);
+    //~ stats = js.Browser.document.getElementById("stats");
+    cmp_needle = js.Browser.document.getElementById("cmp_needle");
+    span_seed = js.Browser.document.getElementById("seed");
+    inp_seed = js.Browser.document.getElementById("inp_seed");
+    achievements = js.Browser.document.getElementById("achievements");
+    selectionDiv = js.Browser.document.getElementById("selection");
+    sel_name = js.Browser.document.getElementById("sel_name");
+    sel_level = js.Browser.document.getElementById("sel_level");
+    sel_hp = js.Browser.document.getElementById("sel_hp");
+    edit_name_btn = js.Browser.document.getElementById("edit_name_btn");
+    edit_name_in = js.Browser.document.getElementById("edit_name_in");
+    ul_achv = js.Browser.document.getElementById("ul_achv");
     
-    el_howto_wrap = js.Lib.document.getElementById("howto_wrap");
-    el_howto = js.Lib.document.getElementById("howto");
-    el_howto_title = js.Lib.document.getElementById("howto_title");
-    el_howto_prev = js.Lib.document.getElementById("howto_prev");
+    el_howto_wrap = js.Browser.document.getElementById("howto_wrap");
+    el_howto = js.Browser.document.getElementById("howto");
+    el_howto_title = js.Browser.document.getElementById("howto_title");
+    el_howto_prev = js.Browser.document.getElementById("howto_prev");
     el_howto_prev.onclick = howToPrev;
-    el_howto_next = js.Lib.document.getElementById("howto_next");
+    el_howto_next = js.Browser.document.getElementById("howto_next");
     el_howto_next.onclick = howToNext;
-    el_howto_close = js.Lib.document.getElementById("howto_close");
+    el_howto_close = js.Browser.document.getElementById("howto_close");
     el_howto_close.onclick = howToClose;
   
-    curr_lev = js.Lib.document.getElementById("curr");
-    next_lev = js.Lib.document.getElementById("next");
-    lev_bar = js.Lib.document.getElementById("bar");
-    health = js.Lib.document.getElementById("health");
+    curr_lev = js.Browser.document.getElementById("curr");
+    next_lev = js.Browser.document.getElementById("next");
+    lev_bar = js.Browser.document.getElementById("bar");
+    health = js.Browser.document.getElementById("health");
 
-    //~ viewW = canvas.width = js.Lib.window.innerWidth;
-    //~ viewH = canvas.height = js.Lib.window.innerHeight;
-    //~ viewW = canvas.width = (cast js.Lib.window).clientWidth;
-    //~ viewH = canvas.height = (cast js.Lib.window).clientHeight;
-    js.Lib.window.onresize = function(ev) {
+    //~ viewW = canvas.width = js.Browser.window.innerWidth;
+    //~ viewH = canvas.height = js.Browser.window.innerHeight;
+    //~ viewW = canvas.width = (cast js.Browser.window).clientWidth;
+    //~ viewH = canvas.height = (cast js.Browser.window).clientHeight;
+    js.Browser.window.onresize = function(ev) {
       resized = true;
       world.makeDirty();
     };
@@ -163,12 +163,14 @@ class View
     dia_instructions = new Dia("dia_instructions");
     dia_instructions.bind({ close: dia_instructions.hide });
     
-    var inst_topics = js.Lib.document.getElementById("inst_topics");
-    new JQuery(js.Lib.document.body).children(".howto").each(function(i, el) {
+    //~ Dia.Ad.init();
+    
+    var inst_topics = js.Browser.document.getElementById("inst_topics");
+    new JQuery(js.Browser.document.body).children(".howto").each(function(i, el) {
       var ht = new HowTo(el);
     
-      var li = js.Lib.document.createElement("li");
-      var a = js.Lib.document.createElement("a");
+      var li = js.Browser.document.createElement("li");
+      var a = js.Browser.document.createElement("a");
       a.onclick = cast function() {
         howto = ht;
         howtoIndex = 0;
@@ -195,17 +197,17 @@ class View
     
     edit_name_btn.onclick = editName;
 
-    arr_u = js.Lib.document.getElementById("arr_u");
-    arr_ur = js.Lib.document.getElementById("arr_ur");
-    arr_r = js.Lib.document.getElementById("arr_r");
-    arr_dr = js.Lib.document.getElementById("arr_dr");
-    arr_d = js.Lib.document.getElementById("arr_d");
-    arr_dl = js.Lib.document.getElementById("arr_dl");
-    arr_l = js.Lib.document.getElementById("arr_l");
-    arr_ul = js.Lib.document.getElementById("arr_ul");
-    arr_w = js.Lib.document.getElementById("arr_w");
+    arr_u = js.Browser.document.getElementById("arr_u");
+    arr_ur = js.Browser.document.getElementById("arr_ur");
+    arr_r = js.Browser.document.getElementById("arr_r");
+    arr_dr = js.Browser.document.getElementById("arr_dr");
+    arr_d = js.Browser.document.getElementById("arr_d");
+    arr_dl = js.Browser.document.getElementById("arr_dl");
+    arr_l = js.Browser.document.getElementById("arr_l");
+    arr_ul = js.Browser.document.getElementById("arr_ul");
+    arr_w = js.Browser.document.getElementById("arr_w");
     
-    btn_dismount = js.Lib.document.getElementById("btn_dismount");
+    btn_dismount = js.Browser.document.getElementById("btn_dismount");
 
     binder = new KeyBinder();
     binder.bind(191, dia_instructions.show); // '?'
@@ -218,10 +220,10 @@ class View
     var c = new JQuery(canvas);
     c.bind("keydown", function(ev) binder.call(ev.which));
 
-    js.Lib.document.getElementById("btn_inst").onclick = cast dia_instructions.show;
-    js.Lib.document.getElementById("btn_seed").onclick = cast dia_seed.show;
-    js.Lib.document.getElementById("btn_achv").onclick = cast dia_achievements.show;
-    js.Lib.document.getElementById("btn_about").onclick = cast dia_about.show;
+    js.Browser.document.getElementById("btn_inst").onclick = cast dia_instructions.show;
+    js.Browser.document.getElementById("btn_seed").onclick = cast dia_seed.show;
+    js.Browser.document.getElementById("btn_achv").onclick = cast dia_achievements.show;
+    js.Browser.document.getElementById("btn_about").onclick = cast dia_about.show;
     
     Terrain.init();
     Ent.Player.init();
@@ -241,7 +243,7 @@ class View
 
   public static function main()
   {
-    new JQuery(js.Lib.document).ready(
+    new JQuery(cast js.Browser.document).ready(
       cast function() Images.init(function() {
         trace("Loading complete.");
         var v = new View("canv");
@@ -253,8 +255,8 @@ class View
 
   function resize()
   {
-    viewW = canvas.width = js.Lib.window.innerWidth ;
-    viewH = canvas.height = js.Lib.window.innerHeight;
+    viewW = canvas.width = js.Browser.window.innerWidth ;
+    viewH = canvas.height = js.Browser.window.innerHeight;
     
     Dia.resizeAll();
 
@@ -263,7 +265,7 @@ class View
 
   function restartGame()
   {
-    var b = js.Lib.document.getElementById("battle");
+    var b = js.Browser.document.getElementById("battle");
     b.innerHTML = "";
     dia_win.hide();
     dia_lose.hide();
@@ -293,7 +295,7 @@ class View
       requestAnimationFrame(animate);
     };
 
-    var b = js.Lib.document.getElementById("battle");
+    var b = js.Browser.document.getElementById("battle");
     var wrap = { ls: new Array<Dynamic>() };
 
     world.clearLog = function() {
@@ -304,10 +306,10 @@ class View
         el.className += " closing";
       }
 
-      (cast js.Lib.window).setTimeout(function() { for (el in clears) b.removeChild(el); }, 1000);
+      (cast js.Browser.window).setTimeout(function() { for (el in clears) b.removeChild(el); }, 1000);
     };
     world.log = function(l) {
-      var li = js.Lib.document.createElement("li");
+      var li = js.Browser.document.createElement("li");
 
       switch (l) {
       case Error(s):
@@ -511,18 +513,18 @@ class View
         switch (dir.y) {
         case -1: "-45";
         case 0: "-90";
-        case 1: "-135";
+        case 1, _: "-135";
         }
       case 0:
         switch (dir.y) {
         case -1: "0";
-        case 1: "180";
+        case 1, _: "180";
         }
-      case 1:
+      case 1, _:
         switch (dir.y) {
         case -1: "45";
         case 0: "90";
-        case 1: "135";
+        case 1, _: "135";
         }
       };
     cmp_needle.style.transform = cmp_needle.style.webkitTransform = "rotate(" + degs + "deg)";
@@ -548,7 +550,7 @@ class View
     
     sel_hp.innerHTML = "";
     for (i in 0...selection.maxHp) {
-      var img = js.Lib.document.createElement("img");
+      var img = js.Browser.document.createElement("img");
       (cast img).src = if (i < selection.hp) Images.i.hp.src else Images.i.emptyHp.src;
       sel_hp.appendChild(img);
     }
@@ -575,7 +577,7 @@ class View
     health.innerHTML = "";
     
     for (i in 0...p.maxHp) {
-      var img = js.Lib.document.createElement("img");
+      var img = js.Browser.document.createElement("img");
       (cast img).src = if (i < p.hp) Images.i.heart.src else Images.i.emptyHeart.src;
       health.appendChild(img);
     }
@@ -589,7 +591,7 @@ class View
     if (selection == null) {
       selectionDiv.style.display = "block";
       
-      (cast js.Lib.window).setTimeout(function() {
+      (cast js.Browser.window).setTimeout(function() {
         if (selection != null) {
           selectionDiv.style.opacity = 1;
         }
@@ -610,7 +612,7 @@ class View
     selectionDiv.style.opacity = 0;
     world.makeDirty();
     
-    (cast js.Lib.window).setTimeout(function() {
+    (cast js.Browser.window).setTimeout(function() {
       if (selection == null) selectionDiv.style.display = "none";
     }, 500);
   }
@@ -663,20 +665,20 @@ class View
   /// advanced to the given level.  Schedules said banner for removal
   public function levelUpBanner(level : Int)
   {
-    var div = js.Lib.document.createElement("div");
+    var div = js.Browser.document.createElement("div");
     div.className = "achv";
     
-    var img = js.Lib.document.createElement("img");
+    var img = js.Browser.document.createElement("img");
     (cast img).src = "level up.png";
     img.className = "lev_img";
     div.appendChild(img);
     
-    var type = js.Lib.document.createElement("div");
+    var type = js.Browser.document.createElement("div");
     type.className = "type";
     type.innerHTML = "Level-Up";
     div.appendChild(type);
     
-    var levelup = js.Lib.document.createElement("div");
+    var levelup = js.Browser.document.createElement("div");
     levelup.className = "levelup";
     levelup.innerHTML = "Level " + level;
     div.appendChild(levelup);
@@ -690,13 +692,13 @@ class View
   /// The given element should be the outermost div of the banner
   public function scheduleBanner(el : Dynamic)
   {
-    (cast js.Lib.window).setTimeout(function() {
+    (cast js.Browser.window).setTimeout(function() {
       el.style.opacity = 0;
-      (cast js.Lib.window).setTimeout(function() {
+      (cast js.Browser.window).setTimeout(function() {
         el.style.height = 0;
         el.style.marginBottom = 0;
         el.style.borderWidth = 0;
-        (cast js.Lib.window).setTimeout(function() {
+        (cast js.Browser.window).setTimeout(function() {
           el.parentNode.removeChild(el);
         }, 1000);
       }, 1000);
@@ -719,7 +721,7 @@ class View
       var hsect = howtoSection;
       howtoSection = null;
       
-      (cast js.Lib.window).setTimeout(function() {
+      (cast js.Browser.window).setTimeout(function() {
         if (howtoSection == null) { // if nothing else has happened since setTimeout
           el_howto_title.innerHTML = "";
           if (hsect != null) {
@@ -734,7 +736,7 @@ class View
       
       var sect = howto.sections[howtoIndex];
       var hsect = howtoSection;
-      (cast js.Lib.window).setTimeout(function() {
+      (cast js.Browser.window).setTimeout(function() {
         el_howto.style.opacity = 1;
         
         el_howto_prev.style.opacity = if (howtoIndex > 0) 1 else 0;
@@ -743,14 +745,14 @@ class View
         var show = function() {
           sect.style.opacity = 0;
           el_howto.appendChild(sect);
-          (cast js.Lib.window).setTimeout(function() {
+          (cast js.Browser.window).setTimeout(function() {
             sect.style.opacity = 1;
           }, 100);
         };
         
         if (hsect != null) {
           hsect.style.opacity = 0;
-          (cast js.Lib.window).setTimeout(function() {
+          (cast js.Browser.window).setTimeout(function() {
             el_howto.removeChild(hsect);
             show();
           }, 500);
@@ -807,22 +809,22 @@ class Bubble
     this.img = img;
     this.ent = ent;
     
-    wrap = js.Lib.document.createElement("div");
-    inner = js.Lib.document.createElement("img");
+    wrap = js.Browser.document.createElement("div");
+    inner = js.Browser.document.createElement("img");
     inner.src = img.src;
     wrap.appendChild(inner);
     
     wrap.className = "bubble";
     update();
     
-    js.Lib.document.body.appendChild(wrap);
+    js.Browser.document.body.appendChild(wrap);
     
     registry.push(this);
     
-    (cast js.Lib.window).setTimeout(function() {
+    (cast js.Browser.window).setTimeout(function() {
       wrap.className = "bubble bubbleUp";
       
-      (cast js.Lib.window).setTimeout(remove, 1000);
+      (cast js.Browser.window).setTimeout(remove, 1000);
     }, 200);
   }
   
@@ -830,7 +832,7 @@ class Bubble
   function remove()
   {
     registry.remove(this);
-    js.Lib.document.body.removeChild(wrap);
+    js.Browser.document.body.removeChild(wrap);
   }
   
   /// Moves this bubble so it is over x and y in the view

@@ -1,26 +1,26 @@
 class KeyBinder
 {
-  var bindings : Hash<Void -> Void>;
+  var bindings : Map<Int, Void -> Void>;
   var uncaughtF : Int -> Void = null;
 
   public function new()
   {
-    bindings = new Hash();
+    bindings = new Map();
   }
 
   public function bind(key : Int, f : Void -> Void)
   {
-    bindings.set("" + key, f);
+    bindings.set(key, f);
   }
   
   public function binds(keys : Array<Int>, f : Void -> Void)
   {
-    for (k in keys) bindings.set("" + k, f);
+    for (k in keys) bindings.set(k, f);
   }
 
   public function call(key : Int)
   {
-    var f = bindings.get("" + key);
+    var f = bindings.get(key);
     if (f != null) f();
     else if (uncaughtF != null) uncaughtF(key);
   }

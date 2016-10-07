@@ -519,7 +519,7 @@ class Ai extends Ent
     if (dir != null && traversible(w.tileAt(dir).type) && w.entAt(dir) == null) {
       w.moveEnt(coord, dir);
     } else {
-      var fn = function(terr, c) return Ent.Player.p.coord.distanceTo(c) < PathDist && traversible(terr) && w.entAt(c) == null;
+      var fn = function(terr, c) return Player.p.coord.distanceTo(c) < PathDist && traversible(terr) && w.entAt(c) == null;
       path = w.path(coord, dest, fn);
       if (path.length <= 1) {
         path = null;
@@ -531,7 +531,7 @@ class Ai extends Ent
   }
 }
 
-class Walrus extends Ai, implements Nameable
+class Walrus extends Ai implements Nameable
 {
   public var name : String;
 

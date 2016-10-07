@@ -75,12 +75,12 @@ class Utils
     var angle = Math.round(Math.atan((a.y - b.y) / (b.x - a.x)) / Math.PI * 4);
     var dir = { x: switch (angle) {
                      case -2, 2: 0;
-                     case -1, 0, 1: 1;
+                     case -1, 0, 1, _: 1;
                    },
                 y: switch (angle) {
                      case 1, 2: -1;
                      case 0: 0;
-                     case -2, -1: 1;
+                     case -2, -1, _: 1;
                    }
               };
     if (b.x - a.x < 0) {
