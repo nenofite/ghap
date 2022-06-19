@@ -1,7 +1,5 @@
 # Go Hug a Panda
 
-[Play here.](http://www.bizwacky.com/ghap/ghap.html)
-
 Not much can be said about this little "game." Just find the panda.
 
 The game runs entirely using HTML5 and Javascript, built with 
